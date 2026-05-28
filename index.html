@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hoja de Ruta HPM</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#1a2e4a;font-size:13px}
+.wrap{max-width:1140px;margin:0 auto;padding:14px}
+
+.header{background:#1a2e4a;border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.hdr-divider{width:2px;height:50px;background:#2ecc71;flex-shrink:0}
+.hdr-text{flex:1}
+.hdr-text h1{color:#fff;font-size:13px;font-weight:700;line-height:1.4;text-transform:uppercase}
+.hdr-text h1 span{color:#2ecc71}
+
+.proposito{background:#fff;border-radius:10px;border-left:5px solid #2ecc71;padding:12px 16px;margin-bottom:10px}
+.proposito h2{font-size:10px;font-weight:700;text-transform:uppercase;color:#2ecc71;letter-spacing:.8px;margin-bottom:5px}
+.proposito p{font-size:11px;color:#1a2e4a;line-height:1.5;margin-bottom:8px;font-style:italic}
+.proposito h3{font-size:10px;font-weight:700;text-transform:uppercase;color:#1a2e4a;letter-spacing:.5px;margin-bottom:6px}
+.obj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.obj-item{background:#eaf6ef;border-radius:6px;padding:7px 10px;font-size:10px;color:#1a2e4a;line-height:1.4;border-left:3px solid #27ae60}
+
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tab{background:#fff;border:2px solid #1a2e4a;border-radius:20px;padding:5px 13px;font-size:10.5px;font-weight:700;cursor:pointer;color:#1a2e4a;transition:all .2s;text-transform:uppercase}
+.tab.active,.tab:hover{background:#1a2e4a;color:#2ecc71}
+
+.view{display:none}.view.active{display:block}
+
+/* BARRA AVANCE */
+.pbwrap{background:#fff;border-radius:10px;padding:12px 16px;margin-bottom:10px;border:1.5px solid #e0e8f0}
+.pbtop{font-size:10px;font-weight:700;text-transform:uppercase;color:#1a2e4a;letter-spacing:.5px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.pb-pct{color:#2ecc71;font-size:13px;font-weight:700}
+.pb-stages{display:flex;position:relative;margin-bottom:4px}
+.pb-stages::before{content:'';position:absolute;top:14px;left:0;right:0;height:4px;background:#e0e8f0;z-index:0;border-radius:2px}
+.pb-fill{position:absolute;top:14px;left:0;height:4px;background:linear-gradient(90deg,#2ecc71,#1a2e4a);z-index:1;border-radius:2px;transition:width .5s}
+.pb-stage{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;z-index:2;cursor:pointer}
+.pb-dot{width:28px;height:28px;border-radius:50%;background:#e0e8f0;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#888;transition:all .3s;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.pb-stage.done .pb-dot{background:#2ecc71;color:#fff}
+.pb-stage.partial .pb-dot{background:#f0a500;color:#fff}
+.pb-lbl{font-size:8px;color:#888;margin-top:4px;text-align:center;line-height:1.2;max-width:80px}
+.pb-stage.done .pb-lbl,.pb-stage.partial .pb-lbl{color:#1a2e4a;font-weight:700}
+.pb-hint{font-size:8.5px;color:#aaa;font-style:italic;margin-top:2px}
+
+/* TIMELINE */
+.tl-row{display:flex;align-items:stretch;gap:6px;margin-bottom:10px}
+.phase-col{flex:1;display:flex;flex-direction:column}
+.phase-card{background:#fff;border:2px solid #1a2e4a;border-radius:10px;width:100%;cursor:pointer;transition:box-shadow .2s,transform .2s;overflow:hidden;display:flex;flex-direction:column;height:100%}
+.phase-card:hover{box-shadow:0 4px 16px rgba(26,46,74,.18);transform:translateY(-2px)}
+.phase-card.active{border-color:#2ecc71;box-shadow:0 4px 20px rgba(46,204,113,.25)}
+.phase-hd{background:#1a2e4a;padding:8px 7px;text-align:center;flex-shrink:0}
+.phase-num{color:#2ecc71;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.phase-name{color:#fff;font-size:9px;font-weight:700;text-transform:uppercase;line-height:1.25;margin-top:2px}
+.phase-icon{text-align:center;padding:8px 4px 4px;flex-shrink:0}
+.phase-icon svg{width:32px;height:32px}
+.phase-body{padding:5px 8px 4px;text-align:center;flex:1}
+.phase-focus{font-size:8.5px;color:#1a2e4a;line-height:1.35}
+.phase-prog{font-size:8px;color:#2ecc71;font-weight:700;margin-top:4px}
+.click-hint{font-size:8px;color:#aaa;text-align:center;padding:4px 6px;font-style:italic;flex-shrink:0}
+
+/* DETAIL PANEL */
+.detail-panel{background:#fff;border:2px solid #2ecc71;border-radius:12px;overflow:hidden;display:none;margin-bottom:10px}
+.detail-panel.show{display:block}
+.di{padding:16px 18px}
+.dtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.dtitle{font-size:14px;font-weight:700;color:#1a2e4a;text-transform:uppercase}
+.dtitle span{color:#2ecc71}
+.dobj{background:#eaf6ef;border-left:4px solid #27ae60;border-radius:0 8px 8px 0;padding:9px 13px;margin-bottom:10px}
+.dobj h3{font-size:9.5px;font-weight:700;text-transform:uppercase;color:#1a2e4a;margin-bottom:3px}
+.dobj p{font-size:10.5px;line-height:1.5;color:#1a2e4a}
+
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.ds{border-radius:0 7px 7px 0;padding:9px 11px}
+.ds.hitos{background:#f4f8f0;border-left:4px solid #2ecc71}
+.ds.risk{background:#fff4f4;border-left:4px solid #c0392b}
+.ds.dtools{background:#f0f4ff;border-left:4px solid #1a2e4a}
+.ds.products{background:#f0fff8;border-left:4px solid #27ae60}
+.ds h3{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;color:#1a2e4a}
+.ds.risk h3{color:#c0392b}
+.ds ul{list-style:none;padding:0}
+
+/* HITOS CON CHECKBOX */
+.hito-item{display:flex;align-items:flex-start;gap:6px;padding:2px 0;cursor:pointer;border-radius:4px;transition:background .15s}
+.hito-item:hover{background:#eaf6ef}
+.hito-cb{width:14px;height:14px;border:2px solid #2ecc71;border-radius:3px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.hito-cb.checked{background:#2ecc71}
+.hito-cb.checked::after{content:'✓';font-size:9px;color:#fff;font-weight:700}
+.hito-txt{font-size:10px;line-height:1.4;color:#1a2e4a}
+.hito-txt.checked{text-decoration:line-through;color:#aaa}
+
+.ds ul li{font-size:10px;line-height:1.4;padding:1.5px 0 1.5px 13px;position:relative;color:#1a2e4a}
+.ds ul li::before{content:'✓';position:absolute;left:0;color:#2ecc71;font-weight:700;font-size:9px}
+.ds.risk ul li::before{content:'⚠';color:#c0392b}
+.ds.dtools ul li::before{content:'→';color:#1a2e4a}
+.ds.products ul li::before{content:'◆';color:#27ae60;font-size:7px;top:4px}
+
+/* HERRAMIENTAS POR ETAPA */
+.etapa-tools{background:#f0f4ff;border:1.5px solid #1a2e4a;border-radius:8px;padding:9px 12px;margin-top:4px}
+.etapa-tools h3{font-size:9.5px;font-weight:700;text-transform:uppercase;color:#1a2e4a;margin-bottom:5px;letter-spacing:.4px}
+.etapa-tools ul{list-style:none;padding:0}
+.etapa-tools ul li{font-size:10px;line-height:1.4;padding:1.5px 0 1.5px 13px;position:relative;color:#1a2e4a}
+.etapa-tools ul li::before{content:'→';position:absolute;left:0;color:#1a2e4a}
+
+/* PLAZOS */
+.plazo-btn{background:none;border:1.5px dashed #2ecc71;border-radius:6px;color:#1a2e4a;font-size:9.5px;font-weight:700;padding:4px 12px;cursor:pointer;transition:all .2s}
+.plazo-btn:hover{background:#eaf6ef}
+.plazo-box{background:#fffbe6;border:1.5px solid #f0c040;border-radius:7px;padding:7px 12px;margin-top:6px;font-size:10px;color:#7a6000;display:none}
+.plazo-box.show{display:block}
+
+.close-btn{background:#1a2e4a;color:#fff;border:none;width:100%;padding:7px;font-size:10px;cursor:pointer;font-weight:700;letter-spacing:.5px}
+.close-btn:hover{background:#2ecc71;color:#1a2e4a}
+
+/* BIBLIOTECA HERRAMIENTAS */
+.toggler{border:none;border-radius:8px;padding:9px 18px;font-size:10.5px;font-weight:700;cursor:pointer;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;letter-spacing:.3px;text-transform:uppercase;transition:background .2s;margin-bottom:0}
+.toggler .arr{transition:transform .3s;font-size:12px}
+.toggler.open .arr{transform:rotate(180deg)}
+.tog-hab{background:#1a2e4a;color:#2ecc71}
+.tog-hab:hover{background:#16253d}
+.tog-lib{background:#27ae60;color:#fff}
+.tog-lib:hover{background:#219a52}
+.tog-content{display:none;border:1.5px solid;border-top:none;border-radius:0 0 8px 8px;padding:12px 14px;margin-bottom:10px;background:#fff}
+.tog-content.show{display:block}
+.tog-content.hab-border{border-color:#1a2e4a}
+.tog-content.lib-border{border-color:#27ae60}
+.hab-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+.hab-card{background:#1a2e4a;border-radius:7px;padding:9px 7px;text-align:center;cursor:pointer;transition:background .2s,transform .2s}
+.hab-card:hover{background:#2ecc71;transform:translateY(-2px)}
+.hab-name{color:#2ecc71;font-size:9px;font-weight:700;text-transform:uppercase;line-height:1.3;margin-bottom:3px}
+.hab-card:hover .hab-name{color:#1a2e4a}
+.hab-desc{color:#a8c0d0;font-size:8.5px;line-height:1.3}
+.hab-card:hover .hab-desc{color:#1a2e4a}
+.lib-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.lib-cat{background:#f4f8f0;border-radius:8px;padding:10px 12px;border-left:3px solid #2ecc71}
+.lib-cat h4{font-size:9.5px;font-weight:700;text-transform:uppercase;color:#1a2e4a;margin-bottom:6px;letter-spacing:.3px}
+.lib-cat ul{list-style:none;padding:0}
+.lib-cat ul li{font-size:10px;line-height:1.45;padding:2px 0 2px 12px;position:relative;color:#1a2e4a}
+.lib-cat ul li::before{content:'▸';position:absolute;left:0;color:#2ecc71;font-size:9px}
+.etapa-tag{display:inline-block;background:#1a2e4a;color:#2ecc71;font-size:7.5px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:4px;vertical-align:middle}
+
+/* MATRIZ */
+.mwrap{background:#fff;border-radius:10px;overflow:hidden;margin-bottom:10px}
+.mtitle{background:#1a2e4a;color:#2ecc71;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:9px 15px}
+.mtable{width:100%;border-collapse:collapse}
+.mtable th{background:#1a2e4a;color:#fff;padding:7px 9px;text-align:left;font-weight:700;font-size:9px;text-transform:uppercase}
+.mtable th.g{color:#2ecc71}
+.mtable td{padding:7px 9px;border-bottom:1px solid #e8edf2;vertical-align:top;font-size:9.5px;line-height:1.4}
+.mtable tr:nth-child(even) td{background:#f7fafc}
+.mtable tr:hover td{background:#eaf6ef}
+.badge{display:inline-block;background:#eaf6ef;color:#1a2e4a;border:1px solid #2ecc71;border-radius:9px;padding:1px 7px;font-size:8.5px;font-weight:600;margin:1px 2px 1px 0}
+.badge.risk{background:#fff4f4;border-color:#c0392b;color:#c0392b}
+.badge.prod{background:#f0f4ff;border-color:#1a2e4a;color:#1a2e4a}
+
+/* EXPORT */
+.exp-btn{background:#2ecc71;color:#1a2e4a;border:none;border-radius:8px;padding:7px 14px;font-size:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .2s}
+.exp-btn:hover{background:#27ae60;color:#fff}
+
+.footer{background:#1a2e4a;border-radius:10px;padding:11px 16px;display:flex;align-items:center;gap:12px;margin-top:4px}
+.footer p{color:#fff;font-size:10px;line-height:1.5}
+.footer p strong{color:#2ecc71}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="header">
+  <svg width="88" height="50" viewBox="0 0 88 50" fill="none">
+    <rect x="2" y="5" width="9" height="35" rx="2" fill="#2ecc71"/>
+    <rect x="2" y="19" width="22" height="7" rx="2" fill="#2ecc71"/>
+    <rect x="15" y="5" width="9" height="35" rx="2" fill="#2ecc71"/>
+    <rect x="9.5" y="1" width="2" height="9" rx="1" fill="#fff"/>
+    <rect x="6" y="4" width="8" height="2" rx="1" fill="#fff"/>
+    <rect x="30" y="5" width="8" height="35" rx="2" fill="#fff"/>
+    <rect x="30" y="5" width="16" height="7" rx="2" fill="#fff"/>
+    <rect x="30" y="17" width="16" height="7" rx="2" fill="#fff"/>
+    <rect x="38" y="5" width="8" height="19" rx="2" fill="#fff"/>
+    <rect x="56" y="5" width="8" height="35" rx="2" fill="#fff"/>
+    <rect x="74" y="5" width="8" height="35" rx="2" fill="#fff"/>
+    <polygon points="60,5 82,5 71,21" fill="#fff"/>
+    <text x="2" y="48" font-family="Arial" font-size="5.5" font-weight="700" fill="#2ecc71" letter-spacing="0.5">HOSPITAL PUERTO MONTT</text>
+  </svg>
+  <div class="hdr-divider"></div>
+  <div class="hdr-text">
+    <h1>Hoja de Ruta — <span>Rediseño del Proceso Ambulatorio</span> y Gestión de la Continuidad de la Atención</h1>
+  </div>
+  <button class="exp-btn" onclick="exportHTML()">⬇ Descargar HTML</button>
+</div>
+
+<!-- PROPÓSITO -->
+<div class="proposito">
+  <h2>🎯 Propósito general</h2>
+  <p>Análisis, articulación y mejora continua de los procesos ambulatorios y de la continuidad de la atención.</p>
+  <h3>Objetivos específicos</h3>
+  <div class="obj-grid" id="objGrid"></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showView('ruta',this)">Hoja de Ruta</div>
+  <div class="tab" onclick="showView('matriz',this)">Matriz de Coherencia</div>
+</div>
+
+<!-- VIEW: HOJA DE RUTA -->
+<div class="view active" id="view-ruta">
+
+  <!-- BARRA DE AVANCE -->
+  <div class="pbwrap">
+    <div class="pbtop">
+      <span>📊 Seguimiento de implementación</span>
+      <span class="pb-pct" id="pctLabel">0% completado</span>
+    </div>
+    <div class="pb-stages" id="pbStages">
+      <div class="pb-fill" id="pbFill" style="width:0%"></div>
+    </div>
+    <div class="pb-hint">El avance se calcula según los hitos marcados en el detalle de cada etapa.</div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="tl-row" id="timeline"></div>
+
+  <!-- DETAIL PANEL -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="di" id="detailInner"></div>
+    <button class="close-btn" onclick="closeDetail()">▲ CERRAR DETALLE</button>
+  </div>
+
+  <!-- BIBLIOTECA -->
+  <button class="toggler tog-lib" id="libBtn" onclick="toggleSec('libContent','libBtn')">
+    📚 Biblioteca de herramientas de trabajo <span class="arr">▼</span>
+  </button>
+  <div class="tog-content lib-border" id="libContent">
+    <div class="lib-grid" id="libGrid"></div>
+  </div>
+
+  <!-- HABILITANTES -->
+  <button class="toggler tog-hab" id="habBtn" onclick="toggleSec('habContent','habBtn')" style="margin-top:8px">
+    ⚙ Habilitantes para la implementación del cambio <span class="arr">▼</span>
+  </button>
+  <div class="tog-content hab-border" id="habContent">
+    <div class="hab-grid" id="habGrid"></div>
+  </div>
+
+</div>
+
+<!-- VIEW: MATRIZ -->
+<div class="view" id="view-matriz">
+  <div class="mwrap">
+    <div class="mtitle">Matriz de Coherencia — Etapas · Objetivos · Hitos · Productos · Riesgos</div>
+    <table class="mtable">
+      <thead><tr>
+        <th>Etapa</th><th class="g">Objetivo vinculado</th>
+        <th>Hitos clave</th><th>Productos esperados</th><th>Riesgo crítico</th>
+      </tr></thead>
+      <tbody id="matrizBody"></tbody>
+    </table>
+  </div>
+  <button class="toggler tog-hab" id="habBtn2" onclick="toggleSec('habContent2','habBtn2')">
+    ⚙ Habilitantes para la implementación del cambio <span class="arr">▼</span>
+  </button>
+  <div class="tog-content hab-border" id="habContent2">
+    <div class="hab-grid" id="habGrid2"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div style="font-size:18px;flex-shrink:0">⚙</div>
+  <p><strong>Rediseñar el organigrama no es rediseñar la operación.</strong><br>
+  Son los procesos — y no las cajitas — los que determinan cómo fluye la atención, cómo se sostiene la continuidad y cómo se resuelve la demanda de las personas.</p>
+</div>
+
+</div>
+<script>
+const objetivos=[
+  "Levantar y analizar brechas operativas, organizacionales y de coordinación del proceso ambulatorio.",
+  "Diseñar e implementar mejoras progresivas orientadas a oportunidad, continuidad y experiencia de las personas.",
+  "Proponer e implementar el rediseño organizacional y funcional del proceso ambulatorio.",
+  "Fortalecer mecanismos de articulación entre unidades clínicas, administrativas y territoriales.",
+  "Desarrollar estrategias de monitoreo, trazabilidad y evaluación continua de procesos.",
+  "Identificar e impulsar habilitantes para la implementación del cambio."
+];
+
+const phases=[
+  {
+    num:"Etapa 0",name:"Alineamiento\ny Gobernanza",
+    focus:"Marco común antes de intervenir procesos.",plazo:"2 a 3 semanas",
+    icon:`<svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="16" stroke="#2ecc71" stroke-width="2"/><path d="M12 20h16M20 12v16" stroke="#1a2e4a" stroke-width="2.5" stroke-linecap="round"/><circle cx="20" cy="20" r="4" fill="#2ecc71"/></svg>`,
+    obj:"Construir un marco común de trabajo antes de intervenir procesos, evitando que el rediseño se transforme en un mero cambio de organigrama sin impacto en la operación.",
+    objV:"Proponer e implementar el rediseño organizacional. Identificar habilitantes para el cambio.",
+    hitos:["Definir el equipo implementador","Validar el alcance del rediseño","Establecer patrocinio directivo explícito","Levantar mapa de tomadores de decisiones y actores clave","Definir la metodología de trabajo","Establecer hitos y cronograma general"],
+    riesgo:["Partir rediseñando estructuras sin entender el flujo real de la operación"],
+    etapaTools:["Taller de alineamiento con directivos","Entrevistas con actores clave","Mapeo de tomadores de decisiones","Acta de constitución del equipo implementador"],
+    products:["Acta de constitución del equipo implementador","Mapa de actores","Carta de navegación general","Documento de gobernanza","Definición de líneas estratégicas"]
+  },
+  {
+    num:"Etapa 1",name:"Diagnóstico\nOperacional Real",
+    focus:"El proceso real, no el escrito ni el ideal.",plazo:"4 a 6 semanas",
+    icon:`<svg viewBox="0 0 40 40" fill="none"><circle cx="18" cy="18" r="11" stroke="#2ecc71" stroke-width="2"/><path d="M26 26l6 6" stroke="#1a2e4a" stroke-width="2.5" stroke-linecap="round"/><path d="M13 18h10M18 13v10" stroke="#1a2e4a" stroke-width="2" stroke-linecap="round"/></svg>`,
+    obj:"Entender cómo funciona realmente el proceso ambulatorio hoy. No el proceso descrito. No el ideal. El real.",
+    objV:"Levantar y analizar brechas operativas, organizacionales y de coordinación.",
+    hitos:["Mapear el flujo real de derivación y atención","Identificar duplicidades y registros paralelos","Detectar puntos de pérdida de información","Identificar cuellos de botella y tareas sin responsable definido","Medir tiempos muertos en el proceso","Analizar la experiencia de personas usuarias y equipo funcionario"],
+    riesgo:["Confundir síntomas con problemas estructurales. Los 'tiempos de espera' suelen ser consecuencia de mala programación, trazabilidad deficiente o derivaciones mal gestionadas"],
+    etapaTools:["Acompañamiento observacional en terreno","Mapeo de flujo real (situación actual)","Mapa de experiencia del usuario y del funcionario","Entrevistas breves con equipos operativos","Revisión documental de flujos existentes","Levantamiento ágil de brechas"],
+    products:["Mapa del proceso real","Identificación de brechas críticas","Priorización de problemas","Diagnóstico validado por los equipos"]
+  },
+  {
+    num:"Etapa 2",name:"Diseño del\nModelo Objetivo",
+    focus:"Cómo debería funcionar el proceso integrado.",plazo:"4 semanas",
+    icon:`<svg viewBox="0 0 40 40" fill="none"><rect x="6" y="8" width="28" height="24" rx="3" stroke="#2ecc71" stroke-width="2"/><path d="M12 16h16M12 22h10" stroke="#1a2e4a" stroke-width="2" stroke-linecap="round"/><circle cx="30" cy="28" r="5" fill="#2ecc71"/><path d="M28 28l1.5 1.5L32 26" stroke="#1a2e4a" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    obj:"Definir cómo debería funcionar el proceso ambulatorio integrado, articulando roles transversales entre equipos, unidades y dispositivos intra y extrahospitalarios.",
+    objV:"Diseñar mejoras progresivas. Fortalecer articulación intrahospitalaria — con guiño a dispositivos y equipos extramuros (modelo centrífugo).",
+    hitos:["Diseñar el modelo de continuidad de la atención","Definir flujos integrados entre unidades y dispositivos","Definir roles transversales y gobernanza operacional","Establecer qué hace cada unidad, qué NO hace y dónde inicia y termina cada intervención","Integrar mecanismos de articulación extramuro en el diseño (ej. equipos que resuelven demanda en la red)","Establecer qué información se registra una sola vez y cómo se comparte"],
+    riesgo:["Diseñar un modelo teóricamente correcto pero inviable en la operación real","Omitir la dimensión extramuro del diseño, dejando sin integración formal los mecanismos de salida del hospital hacia la red"],
+    etapaTools:["Talleres de codiseño con equipos","Diagramas de flujo objetivo","Matriz de roles y responsabilidades","Revisión de modelos similares en otros servicios de salud"],
+    products:["Modelo operativo objetivo con componente territorial","Diagramas de flujo integrados","Matriz de roles y responsabilidades","Arquitectura funcional del proceso ambulatorio"]
+  },
+  {
+    num:"Etapa 3",name:"Mejoras Tempranas\ne Implementación",
+    focus:"Cambios concretos y visibles que validen el rediseño.",plazo:"2 a 4 meses",
+    icon:`<svg viewBox="0 0 40 40" fill="none"><path d="M20 6l3.5 7 7.5 1.1-5.5 5.3 1.3 7.6L20 23.5l-6.8 3.5 1.3-7.6L9 14.1l7.5-1.1z" stroke="#2ecc71" stroke-width="2" stroke-linejoin="round"/><path d="M14 32h12M17 36h6" stroke="#1a2e4a" stroke-width="2" stroke-linecap="round"/></svg>`,
+    obj:"Generar cambios concretos y visibles que validen el rediseño y disminuyan la resistencia. Sin resultados tempranos, el proceso pierde legitimidad.",
+    objV:"Diseñar e implementar mejoras progresivas. Desarrollar estrategias de monitoreo y trazabilidad.",
+    hitos:["Implementar mecanismos de acompañamiento activo de personas en lista de espera","Establecer criterios de categorización y priorización de la demanda","Diseñar dispositivos o unidades de gestión: demanda, oferta, acompañamiento y continuidad","Coordinar operativamente los mecanismos de articulación con la red asistencial","Reducir registros paralelos y estandarizar el registro","Poner en marcha tableros de indicadores de seguimiento"],
+    riesgo:["Sobrecargar los equipos con demasiados cambios simultáneos","Implementar mecanismos de articulación con la red sin trazabilidad ni registro formal"],
+    etapaTools:["Sistemas informáticos de apoyo disponibles","Tableros de indicadores de seguimiento","Protocolos simples y trazabilidad mínima","Automatización básica de flujos repetitivos"],
+    products:["Mejoras visibles en la operación","Dispositivos o unidades de gestión en funcionamiento inicial","Indicadores tempranos de desempeño","Validación operativa del modelo"]
+  },
+  {
+    num:"Etapa 4",name:"Formalización\nEstructural",
+    focus:"La estructura sigue al proceso, no al revés.",plazo:"1 a 2 meses",
+    icon:`<svg viewBox="0 0 40 40" fill="none"><rect x="14" y="4" width="12" height="8" rx="2" stroke="#2ecc71" stroke-width="2"/><rect x="4" y="28" width="12" height="8" rx="2" stroke="#1a2e4a" stroke-width="2"/><rect x="24" y="28" width="12" height="8" rx="2" stroke="#1a2e4a" stroke-width="2"/><path d="M20 12v8M10 28v-8h20v8" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    obj:"Alinear la estructura organizacional con el modelo operativo que ya está funcionando. Primero el proceso, después el organigrama.",
+    objV:"Proponer e implementar el rediseño organizacional y funcional del proceso ambulatorio.",
+    hitos:["Definir la estructura organizacional resultante del análisis colaborativo","Establecer dependencias, líneas de reporte y gobernanza transversal","Formalizar roles y funciones según el modelo operativo validado","Tramitar los actos administrativos que correspondan"],
+    riesgo:["Convertir la formalización en una disputa de poder entre unidades","Adelantar la definición de estructura antes de validar el modelo operativo"],
+    etapaTools:["Talleres de validación con jefaturas y equipos","Asesoría jurídica y administrativa","Actos administrativos y resoluciones"],
+    products:["Estructura organizacional definida y validada","Roles y funciones formalizados","Modelo institucionalizado mediante actos administrativos"]
+  },
+  {
+    num:"Etapa 5",name:"Sostenibilidad\ny Evaluación Continua",
+    focus:"El rediseño como capacidad institucional permanente.",plazo:"6 a 12 meses",
+    icon:`<svg viewBox="0 0 40 40" fill="none"><path d="M8 30l8-10 6 6 8-14" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="12" r="4" fill="#2ecc71"/><path d="M6 34h28" stroke="#1a2e4a" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    obj:"Transformar el rediseño en una capacidad institucional permanente. Sostener, evaluar y mejorar continuamente el modelo, evitando la regresión a prácticas fragmentadas.",
+    objV:"Desarrollar estrategias de monitoreo, trazabilidad y evaluación continua. Fortalecer articulación entre unidades.",
+    hitos:["Monitoreo continuo con indicadores clave: tiempos efectivos, no presentación, contactabilidad, trazabilidad","Reevaluación periódica del modelo y sus componentes","Gestión del cambio sostenida en el tiempo","Formación continua de equipos en el nuevo modelo","Integración digital progresiva","Mejora continua basada en datos y experiencia de personas y equipos"],
+    riesgo:["Volver a trabajar por departamentos aislados una vez disminuida la presión del cambio","Perder la gobernanza transversal conquistada durante la implementación"],
+    etapaTools:["Tableros de indicadores de seguimiento","Ciclos de mejora continua (revisión periódica)","Encuestas de experiencia usuaria y funcionaria","Registros unificados y auditables"],
+    products:["Modelo sostenible de continuidad de la atención","Gobernanza permanente y transversal","Cultura organizacional orientada a la continuidad","Reducción sostenida de la fragmentación asistencial"]
+  }
+];
+
+const habilitantes=[
+  {name:"Gobernanza",desc:"Marco de autoridad, decisiones y responsabilidades transversales."},
+  {name:"Espacios físicos",desc:"Infraestructura mínima para coordinación presencial efectiva."},
+  {name:"Soporte TI",desc:"Sistemas, conectividad y herramientas digitales habilitadas."},
+  {name:"Gestión del cambio",desc:"Escuchar resistencias y demostrar utilidad real en cada etapa."},
+  {name:"Capacitación",desc:"Formación continua de equipos para sostener el nuevo modelo."},
+  {name:"Estandarización",desc:"Procesos, registros y protocolos uniformes entre unidades."}
+];
+
+const libCats=[
+  {name:"Diagnóstico y mapeo",etapas:"E1–E2",items:["Acompañamiento observacional en terreno (E1)","Mapeo de flujo real — situación actual (E1)","Mapa de experiencia del usuario y funcionario (E1)","Entrevistas breves con equipos operativos (E0–E1)","Revisión documental de flujos existentes (E1)","Levantamiento ágil de brechas operativas (E1)"]},
+  {name:"Diseño y codiseño",etapas:"E2–E3",items:["Talleres de codiseño con equipos (E2)","Diagramas de flujo objetivo (E2)","Matriz de roles y responsabilidades (E2)","Protocolos simples de operación (E3)","Revisión de modelos similares (E2)"]},
+  {name:"Seguimiento y datos",etapas:"E3–E5",items:["Tableros de indicadores de seguimiento (E3–E5)","Sistemas informáticos de apoyo disponibles (E3)","Automatización básica de flujos repetitivos (E3)","Registros unificados y auditables (E3–E5)","Ciclos de mejora continua — revisión periódica (E5)","Encuestas de experiencia usuaria y funcionaria (E5)"]},
+  {name:"Gestión del cambio y gobernanza",etapas:"E0–E5",items:["Taller de alineamiento con directivos (E0)","Mapeo de tomadores de decisiones (E0)","Comunicación interna estructurada (E0–E3)","Talleres de validación con jefaturas (E4)","Registro de acuerdos y compromisos (E0–E5)","Asesoría jurídica y administrativa (E4)"]}
+];
+
+// Estado de hitos: {etapaIdx: [bool,...]}
+let hitoState=phases.map(p=>p.hitos.map(()=>false));
+let activePhase=null;
+
+function totalHitos(){return phases.reduce((a,p)=>a+p.hitos.length,0)}
+function completedHitos(){return hitoState.reduce((a,s)=>a+s.filter(Boolean).length,0)}
+function etapaCompletedHitos(i){return hitoState[i].filter(Boolean).length}
+
+function updateProgress(){
+  const tot=totalHitos(), done=completedHitos();
+  const pct=tot>0?Math.round((done/tot)*100):0;
+  document.getElementById('pctLabel').textContent=pct+'% completado ('+done+'/'+tot+' hitos)';
+  document.getElementById('pbFill').style.width=pct+'%';
+  // update dots
+  document.querySelectorAll('.pb-stage').forEach((el,i)=>{
+    const comp=etapaCompletedHitos(i), total=phases[i].hitos.length;
+    el.classList.remove('done','partial');
+    if(comp===total) el.classList.add('done');
+    else if(comp>0) el.classList.add('partial');
+    el.querySelector('.pb-dot').textContent=comp===total?'✓':comp>0?comp:i+1;
+  });
+  // update card mini-progress
+  phases.forEach((_,i)=>{
+    const el=document.getElementById('prog-'+i);
+    if(!el) return;
+    const c=etapaCompletedHitos(i), t=phases[i].hitos.length;
+    el.textContent=c>0?c+'/'+t+' hitos':'';
+    el.style.color=c===t?'#2ecc71':c>0?'#f0a500':'transparent';
+  });
+}
+
+function renderObjetivos(){
+  const g=document.getElementById('objGrid');
+  objetivos.forEach(o=>{
+    const d=document.createElement('div');d.className='obj-item';
+    d.innerHTML='<span style="color:#2ecc71;font-weight:700">→ </span>'+o;
+    g.appendChild(d);
+  });
+}
+
+function renderProgressBar(){
+  const cont=document.getElementById('pbStages');
+  [...cont.querySelectorAll('.pb-stage')].forEach(el=>el.remove());
+  phases.forEach((p,i)=>{
+    const s=document.createElement('div');s.className='pb-stage';
+    s.innerHTML=`<div class="pb-dot">${i+1}</div><div class="pb-lbl">${p.num}<br>${p.name.replace(/\n/,' ')}</div>`;
+    cont.appendChild(s);
+  });
+}
+
+function renderTimeline(){
+  const tl=document.getElementById('timeline');
+  phases.forEach((p,i)=>{
+    const col=document.createElement('div');col.className='phase-col';
+    col.innerHTML=`<div class="phase-card" id="card-${i}" onclick="togglePhase(${i})">
+      <div class="phase-hd">
+        <div class="phase-num">${p.num}</div>
+        <div class="phase-name">${p.name.replace(/\n/g,'<br>')}</div>
+      </div>
+      <div class="phase-icon">${p.icon}</div>
+      <div class="phase-body">
+        <div class="phase-focus">${p.focus}</div>
+        <div class="phase-prog" id="prog-${i}"></div>
+      </div>
+      <div class="click-hint">clic para detalle</div>
+    </div>`;
+    tl.appendChild(col);
+  });
+}
+
+function togglePhase(i){
+  if(activePhase===i){closeDetail();return;}
+  activePhase=i;
+  document.querySelectorAll('.phase-card').forEach((c,idx)=>c.classList.toggle('active',idx===i));
+  renderDetail(i);
+  const panel=document.getElementById('detailPanel');
+  panel.classList.add('show');
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+
+function renderDetail(i){
+  const p=phases[i];
+  const hitosHTML=p.hitos.map((h,j)=>`
+    <div class="hito-item" onclick="toggleHito(${i},${j})">
+      <div class="hito-cb ${hitoState[i][j]?'checked':''}" id="cb-${i}-${j}"></div>
+      <div class="hito-txt ${hitoState[i][j]?'checked':''}" id="ht-${i}-${j}">${h}</div>
+    </div>`).join('');
+  const toolsHTML=p.etapaTools.map(t=>`<li>${t}</li>`).join('');
+  document.getElementById('detailInner').innerHTML=`
+    <div class="dtop">
+      <div class="dtitle"><span>${p.num}</span> — ${p.name.replace(/\n/,' ')}</div>
+      <button class="plazo-btn" onclick="togglePlazo(this)">⏱ Ver plazo estimado</button>
+    </div>
+    <div class="plazo-box" id="plazoBox">Plazo estimado: <strong>${p.plazo}</strong> — referencial, sujeto al contexto institucional.</div>
+    <div class="dobj"><h3>Objetivo</h3><p>${p.obj}</p></div>
+    <div class="dgrid">
+      <div class="ds hitos">
+        <h3>✓ Hitos — marcar avance</h3>
+        ${hitosHTML}
+      </div>
+      <div>
+        <div class="ds risk" style="margin-bottom:8px"><h3>⚠ Riesgo crítico</h3><ul>${p.riesgo.map(r=>`<li>${r}</li>`).join('')}</ul></div>
+        <div class="ds products"><h3>◆ Productos esperados</h3><ul>${p.products.map(pr=>`<li>${pr}</li>`).join('')}</ul></div>
+      </div>
+    </div>
+    <div class="etapa-tools" style="margin-top:8px">
+      <h3>🛠 Herramientas sugeridas para esta etapa</h3>
+      <ul>${toolsHTML}</ul>
+    </div>`;
+}
+
+function toggleHito(i,j){
+  hitoState[i][j]=!hitoState[i][j];
+  // update checkboxes in DOM
+  const cb=document.getElementById('cb-'+i+'-'+j);
+  const ht=document.getElementById('ht-'+i+'-'+j);
+  if(cb){cb.className='hito-cb'+(hitoState[i][j]?' checked':'');}
+  if(ht){ht.className='hito-txt'+(hitoState[i][j]?' checked':'');}
+  updateProgress();
+}
+
+function togglePlazo(btn){
+  const box=document.getElementById('plazoBox');
+  box.classList.toggle('show');
+  btn.textContent=box.classList.contains('show')?'⏱ Ocultar plazo':'⏱ Ver plazo estimado';
+}
+
+function closeDetail(){
+  activePhase=null;
+  document.querySelectorAll('.phase-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('detailPanel').classList.remove('show');
+}
+
+function renderHab(id){
+  const g=document.getElementById(id);
+  habilitantes.forEach(h=>{
+    const d=document.createElement('div');d.className='hab-card';
+    d.innerHTML=`<div class="hab-name">${h.name}</div><div class="hab-desc">${h.desc}</div>`;
+    g.appendChild(d);
+  });
+}
+
+function renderLib(){
+  const g=document.getElementById('libGrid');
+  libCats.forEach(c=>{
+    const d=document.createElement('div');d.className='lib-cat';
+    d.innerHTML=`<h4>${c.name} <span class="etapa-tag">${c.etapas}</span></h4><ul>${c.items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+    g.appendChild(d);
+  });
+}
+
+function renderMatriz(){
+  const tb=document.getElementById('matrizBody');
+  phases.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><strong>${p.num}</strong><br><span style="font-size:8.5px;color:#555">${p.name.replace(/\n/,' ')}</span></td>
+      <td style="font-size:9.5px">${p.objV}</td>
+      <td>${p.hitos.map(h=>`<span class="badge">${h}</span>`).join('')}</td>
+      <td>${p.products.map(pr=>`<span class="badge prod">${pr}</span>`).join('')}</td>
+      <td>${p.riesgo.map(r=>`<span class="badge risk">${r}</span>`).join('')}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function toggleSec(id,btnId){
+  const el=document.getElementById(id), btn=document.getElementById(btnId);
+  el.classList.toggle('show');btn.classList.toggle('open');
+}
+
+function showView(id,tab){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  tab.classList.add('active');
+}
+
+function exportHTML(){
+  const html='<!DOCTYPE html>'+document.documentElement.outerHTML;
+  const blob=new Blob([html],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='HojaRuta_HPM_ProcesoAmbulatorio.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+renderObjetivos();
+renderProgressBar();
+renderTimeline();
+renderHab('habGrid');
+renderHab('habGrid2');
+renderLib();
+renderMatriz();
+updateProgress();
+</script>
+</body>
+</html>
