@@ -63,6 +63,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--clr-bg);color:var(
 /* OWNER EDIT */
 body.owner-mode [data-editable]{border-bottom:2px dashed var(--clr-green);outline:none;cursor:text}
 body.owner-mode [data-editable]:focus{background:#eaf6ef;border-radius:3px}
+body.owner-mode #objGeneralText{border:2px dashed var(--clr-green);border-radius:6px;padding:4px 8px;cursor:text}
+body.owner-mode #objGeneralText:focus{background:rgba(255,255,255,.15);outline:none;color:#fff}
 .ec{display:none}
 body.owner-mode .ec{display:inline-flex;gap:4px;align-items:center;margin-left:4px;vertical-align:middle}
 body.visitor-mode .vr{display:none!important}
@@ -384,7 +386,7 @@ const LIBS=[{name:"Diagnóstico y mapeo",et:"E1–E2",items:["Acompañamiento ob
 
 const DEFAULT={
   propDesc:"Análisis, articulación y mejora continua de los procesos ambulatorios y de la continuidad de la atención.",
-  objGeneral:"Conducir el proceso de análisis, articulación y mejora continua necesario para el rediseño del proceso ambulatorio y el fortalecimiento de la continuidad de la atención.",
+  objGeneral:"Diseñar e implementar de manera gradual el rediseño organizacional y funcional del proceso ambulatorio del Hospital Puerto Montt, fortaleciendo la coordinación, la gobernanza y la continuidad de la atención.",
   objectives:["Levantar y analizar brechas operativas, organizacionales y de coordinación del proceso ambulatorio.","Diseñar e implementar mejoras progresivas orientadas a oportunidad, continuidad y experiencia de las personas.","Proponer e implementar el rediseño organizacional y funcional del proceso ambulatorio.","Fortalecer mecanismos de articulación entre unidades clínicas, administrativas y territoriales."],
   indicators:[{ind:"N° de brechas documentadas y priorizadas",base:"Sin levantamiento formal",meta:"≥ 5 brechas priorizadas al cierre E1",freq:"Al cierre E1"},{ind:"N° de mejoras implementadas con seguimiento formal",base:"0 mejoras formalizadas",meta:"≥ 3 mejoras visibles al cierre E3",freq:"Trimestral"},{ind:"Estado de formalización del rediseño organizacional",base:"Sin estructura formal",meta:"Resolución emitida al cierre E4",freq:"Al cierre E4"},{ind:"N° de unidades con articulación activa documentada",base:"0 unidades articuladas",meta:"100% de unidades del modelo integradas",freq:"Semestral"}],
   phases:[
@@ -548,7 +550,7 @@ function renderDetail(i){
     <div class="ec" style="margin-top:8px"><button class="btn btn-dark btn-sm" onclick="addListItem(${i},'etapaTools')">+ Agregar</button></div></div>`;
   document.getElementById('detailInner').innerHTML=`
     <div class="dtop">
-      <div class="dtitle"><span>${p.num}</span> — ${p.name.replace(/\n/,' ')}</div>
+      <div class="dtitle"><span>${p.num}</span> — <span ${ow?`contenteditable="true" onclick="event.stopPropagation()" onblur="savePhaseName(${i},this)" title="Clic para editar título"`:''}>${p.name.replace(/\n/,' ')}</span></div>
       ${vis?'':'<button class="plazo-btn" onclick="togPlazo(this)">⏱ Ver plazo</button>'}
     </div>
     ${vis?'':'<div class="plazo-box" id="plazoBox">Plazo estimado: <strong>'+p.plazo+'</strong> — referencial.</div>'}
