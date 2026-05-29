@@ -380,6 +380,14 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--clr-
 <script>
 const LS='hpm_v5';
 const CFG={passwords:{editor:'editor2026',owner:'propietario2026'}};
+const FB_URL='https://hoja-ruta-ambulatorio-default-rtdb.firebaseio.com';
+
+async function fbGet(path){
+  try{const r=await fetch(`${FB_URL}/${path}.json`);if(!r.ok)return null;const d=await r.json();return d;}catch(e){return null;}
+}
+async function fbSet(path,data){
+  try{await fetch(`${FB_URL}/${path}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});}catch(e){console.warn('Firebase write error',e);}
+}
 const MITIG=["Marcha blanca y control progresivo","Gobernanza transversal","Implementación gradual","Comunicación estructurada","Participación temprana y trabajo colaborativo"];
 const HABS=[{name:"Gobernanza",desc:"Marco de autoridad, decisiones y responsabilidades transversales."},{name:"Espacios físicos",desc:"Infraestructura mínima para coordinación presencial efectiva."},{name:"Soporte TI",desc:"Sistemas, conectividad y herramientas digitales habilitadas."},{name:"Gestión del cambio",desc:"Escuchar resistencias y demostrar utilidad real en cada etapa."},{name:"Capacitación",desc:"Formación continua de equipos para sostener el nuevo modelo."},{name:"Estandarización",desc:"Procesos, registros y protocolos uniformes entre unidades."}];
 const LIBS=[{name:"Diagnóstico y mapeo",et:"E1–E2",items:["Acompañamiento observacional en terreno (E1)","Mapeo de flujo real — situación actual (E1)","Mapa de experiencia del usuario y funcionario (E1)","Entrevistas breves con equipos operativos (E0–E1)","Revisión documental de flujos existentes (E1)","Levantamiento ágil de brechas operativas (E1)"]},{name:"Diseño y codiseño",et:"E2–E3",items:["Talleres de codiseño con equipos (E2)","Diagramas de flujo objetivo (E2)","Matriz de roles y responsabilidades (E2)","Protocolos simples de operación (E3)","Revisión de modelos similares (E2)"]},{name:"Seguimiento y datos",et:"E3–E5",items:["Tableros de indicadores de seguimiento (E3–E5)","Sistemas informáticos de apoyo (E3)","Automatización básica de flujos (E3)","Registros unificados y auditables (E3–E5)","Ciclos de mejora continua (E5)","Encuestas de experiencia usuaria y funcionaria (E5)"]},{name:"Gestión del cambio y gobernanza",et:"E0–E5",items:["Taller de alineamiento con directivos (E0)","Mapeo de tomadores de decisiones (E0)","Comunicación interna estructurada (E0–E3)","Talleres de validación con jefaturas (E4)","Registro de acuerdos y compromisos (E0–E5)","Asesoría jurídica y administrativa (E4)"]}];
@@ -591,6 +599,7 @@ function toggleHito(i,j){
   if(cb)cb.className='hito-cb'+(HS[i][j]?' checked':'')+(role!=='visitor'?' can-check':'');
   if(ht)ht.className='hito-txt'+(HS[i][j]?' checked':'');
   updProg();
+  remoteSaveHS();
 }
 function togglePhase(i){if(activePhase===i){closeDetail();return;}activePhase=i;document.querySelectorAll('.phase-card').forEach((c,idx)=>c.classList.toggle('active',idx===i));renderDetail(i);document.getElementById('detailPanel').classList.add('show');setTimeout(()=>document.getElementById('detailPanel').scrollIntoView({behavior:'smooth',block:'nearest'}),50);}
 function togPlazo(btn){const b=document.getElementById('plazoBox');b.classList.toggle('show');btn.textContent=b.classList.contains('show')?'⏱ Ocultar plazo':'⏱ Ver plazo';}
@@ -692,7 +701,9 @@ function buildPrint(opt){
   document.getElementById('propDesc').onblur=()=>saveField('propDesc');
   const og=document.getElementById('objGeneralText');
   if(og)og.textContent=D.objGeneral;
-  renderObjs();renderPB();renderTL();updProg();renderHabs('habGrid');renderHabs('habGrid2');renderLib();
+  renderObjs();renderPB();renderTL();
+  remoteLoadHS();
+  renderHabs('habGrid');renderHabs('habGrid2');renderLib();
 })();
 </script>
 </body>
