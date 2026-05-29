@@ -267,7 +267,7 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--clr-
   <p class="prop-p" id="propDesc" data-editable contenteditable="false" onblur="saveField('propDesc')"></p>
   <div style="background:#1a2e4a;border-radius:8px;padding:12px 16px;margin-bottom:14px">
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#2ecc71;letter-spacing:.8px;margin-bottom:5px">🎯 Objetivo general</div>
-    <p style="font-size:16px;color:#fff;line-height:1.55">Conducir el proceso de análisis, articulación y mejora continua necesario para el rediseño del proceso ambulatorio y el fortalecimiento de la continuidad de la atención.</p>
+    <p id="objGeneralText" data-editable contenteditable="false" onblur="saveObjGeneral()" style="font-size:16px;color:#fff;line-height:1.55"></p>
   </div>
   <div style="display:flex;justify-content:space-between;align-items:center">
     <h3>Objetivos específicos</h3>
@@ -384,6 +384,7 @@ const LIBS=[{name:"Diagnóstico y mapeo",et:"E1–E2",items:["Acompañamiento ob
 
 const DEFAULT={
   propDesc:"Análisis, articulación y mejora continua de los procesos ambulatorios y de la continuidad de la atención.",
+  objGeneral:"Conducir el proceso de análisis, articulación y mejora continua necesario para el rediseño del proceso ambulatorio y el fortalecimiento de la continuidad de la atención.",
   objectives:["Levantar y analizar brechas operativas, organizacionales y de coordinación del proceso ambulatorio.","Diseñar e implementar mejoras progresivas orientadas a oportunidad, continuidad y experiencia de las personas.","Proponer e implementar el rediseño organizacional y funcional del proceso ambulatorio.","Fortalecer mecanismos de articulación entre unidades clínicas, administrativas y territoriales."],
   indicators:[{ind:"N° de brechas documentadas y priorizadas",base:"Sin levantamiento formal",meta:"≥ 5 brechas priorizadas al cierre E1",freq:"Al cierre E1"},{ind:"N° de mejoras implementadas con seguimiento formal",base:"0 mejoras formalizadas",meta:"≥ 3 mejoras visibles al cierre E3",freq:"Trimestral"},{ind:"Estado de formalización del rediseño organizacional",base:"Sin estructura formal",meta:"Resolución emitida al cierre E4",freq:"Al cierre E4"},{ind:"N° de unidades con articulación activa documentada",base:"0 unidades articuladas",meta:"100% de unidades del modelo integradas",freq:"Semestral"}],
   phases:[
@@ -404,6 +405,7 @@ let activePhase=null;
 function lsLoad(){try{const r=localStorage.getItem(LS);if(!r)return;const s=JSON.parse(r);if(s.data)D=s.data;if(!D.indicators)D.indicators=JSON.parse(JSON.stringify(DEFAULT.indicators));if(s.hs){HS=s.hs;D.phases.forEach((p,i)=>{if(!HS[i])HS[i]=p.hitos.map(()=>false);while(HS[i].length<p.hitos.length)HS[i].push(false);});}if(s.role)role=s.role;}catch(e){console.warn(e);}}
 function lsSave(){try{localStorage.setItem(LS,JSON.stringify({data:D,hs:HS,role}));}catch(e){console.warn(e);}}
 
+function saveObjGeneral(){D.objGeneral=document.getElementById('objGeneralText').textContent;lsSave();}
 function applyRole(){
   document.body.className=role==='owner'?'owner-mode':role==='editor'?'editor-mode':'visitor-mode';
   document.getElementById('roleDot').className='role-dot dot-'+role;
@@ -411,6 +413,8 @@ function applyRole(){
   document.getElementById('noticeOwner').style.display=role==='owner'?'block':'none';
   document.getElementById('noticeEditor').style.display=role==='editor'?'block':'none';
   document.getElementById('propDesc').contentEditable=role==='owner'?'true':'false';
+  const og=document.getElementById('objGeneralText');
+  if(og)og.contentEditable=role==='owner'?'true':'false';
   const vis=role==='visitor';
   ['libBtn','libC','habBtn','habC','habBtn2','habC2','tabIndicadores'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=vis?'none':'';});
 }
@@ -428,6 +432,8 @@ function saveObj(i,el){D.objectives[i]=el.textContent;lsSave();}
 function saveInd(i,f,el){if(!D.indicators[i])D.indicators[i]={};D.indicators[i][f]=el.textContent;lsSave();}
 function toggleIndExp(i){const p=document.getElementById('ind-exp-'+i);if(p)p.classList.toggle('show');}
 function savePhase(pi,f,el){D.phases[pi][f]=el.textContent;lsSave();}
+function savePhaseName(i,el){D.phases[i].name=el.textContent;lsSave();}
+function savePhaseFocus(i,el){D.phases[i].focus=el.textContent;lsSave();}
 function saveHito(pi,hi,el){D.phases[pi].hitos[hi]=el.textContent;lsSave();}
 function delHito(pi,hi){D.phases[pi].hitos.splice(hi,1);HS[pi].splice(hi,1);renderDetail(pi);updProg();lsSave();}
 function addHito(pi){D.phases[pi].hitos.push('Nuevo hito.');HS[pi].push(false);renderDetail(pi);updProg();lsSave();}
@@ -492,13 +498,21 @@ function renderPB(){
 
 function renderTL(){
   const tl=document.getElementById('timeline');tl.innerHTML='';
+  const ow=role==='owner';
   D.phases.forEach((p,i)=>{
     const col=document.createElement('div');
+    const edAttr=(fn)=>ow?`contenteditable="true" onclick="event.stopPropagation()" onblur="${fn}(${i},this)"`:'';
     col.innerHTML=`<div class="phase-card" id="card-${i}" onclick="togglePhase(${i})">
-      <div class="phase-hd"><div class="phase-num">${p.num}</div><div class="phase-name">${p.name.replace(/\n/g,'<br>')}</div></div>
+      <div class="phase-hd">
+        <div class="phase-num">${p.num}</div>
+        <div class="phase-name" ${edAttr('savePhaseName')} title="${ow?'Clic para editar título':''}">${p.name.replace(/\n/g,'<br>')}</div>
+      </div>
       <div class="phase-icon">${p.icon}</div>
-      <div class="phase-body"><div class="phase-focus">${p.focus}</div><div class="phase-prog" id="prog-${i}"></div></div>
-      <div class="click-hint">clic para ver detalle</div>
+      <div class="phase-body">
+        <div class="phase-focus" ${edAttr('savePhaseFocus')} title="${ow?'Clic para editar descripción':''}">${p.focus}</div>
+        <div class="phase-prog" id="prog-${i}"></div>
+      </div>
+      <div class="click-hint">${ow?'✎ título y descripción editables · ':''}clic para ver detalle</div>
     </div>`;
     tl.appendChild(col);
   });
@@ -670,9 +684,12 @@ function buildPrint(opt){
 (function(){
   try{localStorage.setItem('_t','1');localStorage.removeItem('_t');lsLoad();}catch(e){document.getElementById('lsWarn').style.display='block';}
   if(!D.indicators)D.indicators=JSON.parse(JSON.stringify(DEFAULT.indicators));
+  if(!D.objGeneral)D.objGeneral=DEFAULT.objGeneral;
   applyRole();
   document.getElementById('propDesc').textContent=D.propDesc;
   document.getElementById('propDesc').onblur=()=>saveField('propDesc');
+  const og=document.getElementById('objGeneralText');
+  if(og)og.textContent=D.objGeneral;
   renderObjs();renderPB();renderTL();updProg();renderHabs('habGrid');renderHabs('habGrid2');renderLib();
 })();
 </script>
