@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hoja de Ruta HPM</title>
+<title>Hoja de Ruta — Implementación del MGIAA | HPM</title>
 <style>
 :root{
   --dark:#1a2e4a; --green:#2ecc71; --green2:#27ae60;
   --bg:#f0f4f8; --r:10px;
   --fs-xs:12px; --fs-sm:13px; --fs-base:15px; --fs-md:16px;
   --fs-lg:18px; --fs-xl:20px; --fs-2xl:22px;
+  --st-i:#2ecc71; --st-d:#f0a500; --st-p:#3498db; --st-x:#95a5a6;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--dark);font-size:var(--fs-lg);line-height:1.6}
@@ -21,6 +22,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--da
 .hdr-text{flex:1}
 .hdr-text h1{color:#fff;font-size:var(--fs-lg);font-weight:700;line-height:1.35;text-transform:uppercase}
 .hdr-text h1 span{color:var(--green)}
+.hdr-text .hdr-sub{color:#8fa8c0;font-size:var(--fs-sm);font-weight:600;letter-spacing:.5px;margin-top:4px;text-transform:none}
 .hdr-actions{display:flex;gap:10px;align-items:center;flex-shrink:0}
 
 /* MEMENTO */
@@ -43,7 +45,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--da
 /* MODALS */
 .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;display:none;align-items:center;justify-content:center}
 .modal-ov.show{display:flex}
-.modal{background:#fff;border-radius:14px;padding:30px;width:420px;max-width:94vw}
+.modal{background:#fff;border-radius:14px;padding:30px;width:420px;max-width:94vw;max-height:90vh;overflow-y:auto}
 .modal h3{font-size:var(--fs-xl);font-weight:700;color:var(--dark);margin-bottom:8px}
 .modal-desc{font-size:var(--fs-base);color:#555;margin-bottom:16px;line-height:1.55}
 .role-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
@@ -93,6 +95,19 @@ body.owner-mode .ec{display:inline-flex;gap:4px;align-items:center;margin-left:4
 .ind-val{color:var(--dark);font-size:var(--fs-base);flex:1;line-height:1.45}
 .ind-toggle{background:none;border:1.5px solid var(--green);border-radius:6px;color:var(--dark);font-size:var(--fs-xs);padding:4px 10px;cursor:pointer;flex-shrink:0;margin-left:auto}
 
+/* GOBERNANZA STRIP */
+.gov-wrap{background:#fff;border-radius:var(--r);padding:18px 22px;margin-bottom:16px;border:1.5px solid #e0e8f0}
+.gov-wrap h2{font-size:var(--fs-sm);font-weight:700;text-transform:uppercase;color:var(--dark);letter-spacing:.8px;margin-bottom:12px}
+.gov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+@media(max-width:800px){.gov-grid{grid-template-columns:repeat(2,1fr)}}
+.gov-card{background:var(--dark);border-radius:8px;padding:12px 10px;text-align:center}
+.gov-card .gr{color:var(--green);font-size:var(--fs-sm);font-weight:700;text-transform:uppercase;margin-bottom:5px;line-height:1.25}
+.gov-card .gd{color:#a8c0d0;font-size:var(--fs-xs);line-height:1.4}
+.gov-arrow{text-align:center;color:var(--green);font-size:16px;font-weight:700}
+.gov-cycle{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.gov-step{background:#eaf6ef;border:1px solid var(--green2);border-radius:16px;padding:5px 12px;font-size:var(--fs-xs);font-weight:700;color:var(--dark)}
+.gov-note{font-size:var(--fs-sm);color:#666;font-style:italic;margin-top:10px;line-height:1.5;border-top:1px dashed #e0e8f0;padding-top:10px}
+
 /* TABS */
 .tabs{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
 .tab{background:#fff;border:2px solid var(--dark);border-radius:24px;padding:9px 20px;font-size:var(--fs-base);font-weight:700;cursor:pointer;color:var(--dark);transition:all .2s;text-transform:uppercase}
@@ -103,8 +118,10 @@ body.owner-mode .tab-owner{display:block}
 
 /* PROGRESS */
 .pbwrap{background:#fff;border-radius:var(--r);padding:18px 22px;margin-bottom:16px;border:1.5px solid #e0e8f0}
-.pbtop{font-size:var(--fs-sm);font-weight:700;text-transform:uppercase;color:var(--dark);letter-spacing:.5px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
-.pb-pct{color:var(--green);font-size:var(--fs-2xl);font-weight:700}
+.pbtop{font-size:var(--fs-sm);font-weight:700;text-transform:uppercase;color:var(--dark);letter-spacing:.5px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+.pb-pct{color:var(--green);font-size:var(--fs-xl);font-weight:700}
+.pb-counts{display:flex;gap:10px;flex-wrap:wrap;font-size:var(--fs-sm);font-weight:700;margin-bottom:14px}
+.pb-counts span{display:inline-flex;align-items:center;gap:5px}
 .pb-stages{display:flex;position:relative;margin-bottom:10px}
 .pb-stages::before{content:'';position:absolute;top:22px;left:0;right:0;height:7px;background:#e0e8f0;z-index:0;border-radius:4px}
 .pb-fill{position:absolute;top:22px;left:0;height:7px;background:linear-gradient(90deg,var(--green),var(--dark));z-index:1;border-radius:4px;transition:width .5s}
@@ -114,6 +131,7 @@ body.owner-mode .tab-owner{display:block}
 .pb-stage.partial .pb-dot{background:#f0a500;color:#fff}
 .pb-lbl{font-size:var(--fs-xs);color:#888;margin-top:7px;text-align:center;line-height:1.3;max-width:100px;font-weight:600}
 .pb-stage.done .pb-lbl,.pb-stage.partial .pb-lbl{color:var(--dark);font-weight:700}
+.pb-caveat{font-size:11px;color:#aaa;font-style:italic;margin-top:8px}
 
 /* TIMELINE */
 .tl-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
@@ -136,9 +154,11 @@ body.owner-mode .tab-owner{display:block}
 .detail-panel{background:#fff;border:2px solid var(--green);border-radius:14px;overflow:hidden;display:none;margin-bottom:16px}
 .detail-panel.show{display:block}
 .di{padding:24px 28px}
-.dtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+.dtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:12px}
 .dtitle{font-size:var(--fs-xl);font-weight:700;color:var(--dark);text-transform:uppercase}
 .dtitle span{color:var(--green)}
+.dmeta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.dmeta .mchip{background:#f0f4ff;border:1px solid var(--dark);border-radius:14px;padding:4px 12px;font-size:var(--fs-xs);font-weight:700;color:var(--dark)}
 .dobj{background:#eaf6ef;border-left:5px solid var(--green2);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:10px}
 .dobj h3{font-size:var(--fs-sm);font-weight:700;text-transform:uppercase;color:var(--dark);margin-bottom:6px;letter-spacing:.5px}
 .dobj p{font-size:var(--fs-lg);line-height:1.6;color:var(--dark)}
@@ -153,13 +173,13 @@ body.owner-mode .tab-owner{display:block}
 .ds.mit{background:#f0f4ff;border-left:4px solid var(--dark)}
 .ds h3{font-size:var(--fs-sm);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;color:var(--dark)}
 .ds.risk h3{color:#c0392b}
+.cat-hd{font-size:var(--fs-xs);font-weight:700;text-transform:uppercase;color:#888;letter-spacing:.5px;margin:10px 0 4px;padding-top:6px;border-top:1px dashed #dde5ec}
+.cat-hd:first-child{margin-top:0;border-top:none;padding-top:0}
 .hito-item{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-radius:6px}
-.hito-cb{width:20px;height:20px;border:2px solid var(--green);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.hito-cb.can-check{cursor:pointer}.hito-cb.can-check:hover{background:#eaf6ef}
-.hito-cb.checked{background:var(--green)}
-.hito-cb.checked::after{content:'✓';font-size:13px;color:#fff;font-weight:700}
+.st-pill{width:26px;height:26px;border-radius:7px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;transition:all .2s}
+.st-pill.can-cycle{cursor:pointer}.st-pill.can-cycle:hover{filter:brightness(1.1);transform:scale(1.05)}
 .hito-txt{font-size:var(--fs-md);line-height:1.5;color:var(--dark);flex:1}
-.hito-txt.checked{text-decoration:line-through;color:#aaa}
+.st-lbl{font-size:10px;font-weight:700;text-transform:uppercase;flex-shrink:0;align-self:center;letter-spacing:.3px}
 .list-item{display:flex;align-items:flex-start;gap:8px;padding:4px 0}
 .list-b{font-size:var(--fs-sm);flex-shrink:0;margin-top:2px}
 .list-t{font-size:var(--fs-base);line-height:1.5;color:var(--dark);flex:1}
@@ -171,6 +191,9 @@ body.owner-mode .tab-owner{display:block}
 .close-btn{background:var(--dark);color:#fff;border:none;width:100%;padding:12px;font-size:var(--fs-base);cursor:pointer;font-weight:700;letter-spacing:.5px}
 .close-btn:hover{background:var(--green);color:var(--dark)}
 .no-access{font-size:var(--fs-sm);color:#aaa;font-style:italic;margin-top:8px}
+.state-legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:#888;margin-top:8px}
+.state-legend span{display:inline-flex;align-items:center;gap:4px}
+.leg-dot{width:14px;height:14px;border-radius:4px;display:inline-block}
 
 /* INDICADORES */
 .ind-table-wrap{background:#fff;border-radius:var(--r);overflow:hidden;margin-bottom:16px}
@@ -194,7 +217,7 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--gree
 
 /* HAB/LIB */
 .hab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-@media(min-width:900px){.hab-grid{grid-template-columns:repeat(6,1fr)}}
+@media(min-width:900px){.hab-grid{grid-template-columns:repeat(4,1fr)}}
 .hab-card{background:var(--dark);border-radius:8px;padding:14px 10px;text-align:center}
 .hab-name{color:var(--green);font-size:var(--fs-sm);font-weight:700;text-transform:uppercase;line-height:1.3;margin-bottom:6px}
 .hab-desc{color:#a8c0d0;font-size:var(--fs-xs);line-height:1.45}
@@ -216,9 +239,10 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--gree
 .mtable td{padding:12px 13px;border-bottom:1px solid #e8edf2;vertical-align:top;font-size:var(--fs-base);line-height:1.55}
 .mtable tr:nth-child(even) td{background:#f7fafc}
 .mtable tr:hover td{background:#eaf6ef}
-.badge{display:inline-block;background:#eaf6ef;color:var(--dark);border:1px solid var(--green);border-radius:10px;padding:3px 10px;font-size:var(--fs-sm);font-weight:600;margin:2px 3px 2px 0;line-height:1.4}
+.badge{display:inline-flex;align-items:center;gap:4px;background:#eaf6ef;color:var(--dark);border:1px solid var(--green);border-radius:10px;padding:3px 10px;font-size:var(--fs-sm);font-weight:600;margin:2px 3px 2px 0;line-height:1.4}
 .badge.risk{background:#fff4f4;border-color:#c0392b;color:#c0392b}
 .badge.prod{background:#f0f4ff;border-color:var(--dark);color:var(--dark)}
+.badge .bdot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
 
 /* CREDIT */
 .credit{text-align:right;font-size:var(--fs-xs);color:#8aa;padding:10px 4px 4px;font-style:italic}
@@ -229,7 +253,7 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--gree
 
 <div class="ls-warn" id="lsWarn">⚠ En Claude.ai la persistencia es limitada. Usa la versión en GitHub para sincronización completa.</div>
 <div class="notice notice-owner" id="noticeOwner">🔑 MODO SOPORTE — Todos los contenidos son editables. Los cambios se guardan automáticamente.</div>
-<div class="notice notice-editor" id="noticeEditor">✏️ EQUIPO IMPLEMENTADOR — Puedes marcar el avance en los hitos de cada etapa.</div>
+<div class="notice notice-editor" id="noticeEditor">✏️ EQUIPO IMPLEMENTADOR — Puedes actualizar el estado de cada hito (clic sobre el ícono de estado).</div>
 
 <!-- HEADER -->
 <div class="header">
@@ -242,7 +266,8 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--gree
   </svg>
   <div class="hdr-div"></div>
   <div class="hdr-text">
-    <h1>Hoja de Ruta — <span>Rediseño del Proceso Ambulatorio</span> y Gestión de la Continuidad de la Atención</h1>
+    <h1>Hoja de Ruta — <span>Implementación del Modelo de Gobernanza Integral de la Atención Abierta</span></h1>
+    <div class="hdr-sub">MGIAA · Hospital Puerto Montt · 2026–2030</div>
   </div>
   <div class="hdr-actions">
     <div class="role-badge" onclick="openLogin()" id="roleBadge">
@@ -254,7 +279,7 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--gree
 </div>
 
 <!-- MEMENTO -->
-<div class="memento">Rediseñar el organigrama no es rediseñar la operación.</div>
+<div class="memento">La estructura sigue al proceso, no al revés.</div>
 
 <!-- SETTINGS (soporte) -->
 <div class="settings" id="settingsPanel">
@@ -276,10 +301,19 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--gree
     <p id="objGeneralText" data-editable contenteditable="false" onblur="saveObjGeneral()" style="font-size:16px;color:#fff;line-height:1.55"></p>
   </div>
   <div style="display:flex;justify-content:space-between;align-items:center">
-    <h3>Objetivos específicos</h3>
+    <h3>Objetivos específicos — cuatro capacidades estratégicas del MGIAA</h3>
     <button class="btn btn-dark btn-sm ec" onclick="addObj()">+ Agregar</button>
   </div>
   <div class="obj-grid" id="objGrid"></div>
+</div>
+
+<!-- GOBERNANZA -->
+<div class="gov-wrap">
+  <h2>🏛 Sistema de gobernanza del MGIAA</h2>
+  <div class="gov-grid" id="govGrid"></div>
+  <div style="text-align:center;font-size:11px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Ciclo de gobernanza</div>
+  <div class="gov-cycle" id="govCycle"></div>
+  <div class="gov-note">La gobernanza del MGIAA no reemplaza las atribuciones de Servicios Clínicos, unidades de apoyo ni la conducción de la Red, que corresponde al Servicio de Salud del Reloncaví. El Departamento de Atención Abierta conduce técnicamente el Modelo dentro de su ámbito de competencia.</div>
 </div>
 
 <!-- TABS -->
@@ -294,8 +328,9 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--gree
 <div class="view active" id="view-ruta">
   <div class="pbwrap">
     <div class="pbtop"><span>📊 Seguimiento de implementación</span><span class="pb-pct" id="pctLbl">0%</span></div>
+    <div class="pb-counts" id="pbCounts"></div>
     <div class="pb-stages" id="pbStages"><div class="pb-fill" id="pbFill" style="width:0%"></div></div>
-    <div style="font-size:12px;color:#aaa;font-style:italic;margin-top:8px">El avance se calcula según los hitos marcados. Requiere acceso de Equipo Implementador o Soporte.</div>
+    <div class="pb-caveat">El porcentaje es un indicador agregado y ponderado por estado de avance, no una medida exacta de cumplimiento. Requiere acceso de Equipo Implementador o Soporte para actualizar estados.</div>
   </div>
   <div class="tl-row" id="timeline"></div>
   <div class="detail-panel" id="detailPanel">
@@ -304,32 +339,33 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--gree
   </div>
   <button class="toggler tog-lib" id="libBtn" onclick="togSec('libC','libBtn')" style="display:none">📚 Biblioteca de herramientas <span class="arr">▼</span></button>
   <div class="tog-content lb" id="libC" style="display:none"><div class="lib-grid" id="libGrid"></div></div>
-  <button class="toggler tog-hab" id="habBtn" onclick="togSec('habC','habBtn')" style="display:none">⚙ Habilitantes para la implementación del cambio <span class="arr">▼</span></button>
+  <button class="toggler tog-hab" id="habBtn" onclick="togSec('habC','habBtn')" style="display:none">⚙ Habilitantes transversales <span class="arr">▼</span></button>
   <div class="tog-content hb" id="habC" style="display:none"><div class="hab-grid" id="habGrid"></div></div>
 </div>
 
 <!-- VIEW: MATRIZ -->
 <div class="view" id="view-matriz">
   <div class="mwrap">
-    <div class="mtitle">Matriz de Coherencia — Etapas · Objetivos · Hitos · Productos · Riesgos</div>
+    <div class="mtitle">Matriz de Coherencia — Etapa · Capacidad/Resultado · Hitos (con estado) · Productos · Riesgo</div>
     <table class="mtable"><thead><tr>
-      <th>Etapa</th><th class="g">Objetivo vinculado</th><th>Hitos clave</th>
-      <th id="th-prod">Productos esperados</th><th id="th-risk">Riesgo crítico</th>
+      <th>Etapa</th><th class="g">Capacidad / Resultado esperado</th><th>Hitos y estado</th>
+      <th id="th-prod">Productos / evidencia</th><th id="th-risk">Riesgo crítico</th>
     </tr></thead><tbody id="matrizBody"></tbody></table>
   </div>
-  <button class="toggler tog-hab" id="habBtn2" onclick="togSec('habC2','habBtn2')" style="display:none">⚙ Habilitantes para la implementación del cambio <span class="arr">▼</span></button>
+  <div class="state-legend" id="matrizLegend" style="padding:0 4px 14px"></div>
+  <button class="toggler tog-hab" id="habBtn2" onclick="togSec('habC2','habBtn2')" style="display:none">⚙ Habilitantes transversales <span class="arr">▼</span></button>
   <div class="tog-content hb" id="habC2" style="display:none"><div class="hab-grid" id="habGrid2"></div></div>
 </div>
 
 <!-- VIEW: INDICADORES -->
 <div class="view" id="view-indicadores">
   <div class="ind-table-wrap">
-    <div class="ind-table-title">📊 Indicadores por objetivo específico</div>
+    <div class="ind-table-title">📊 Indicadores por capacidad estratégica (resultados del MGIAA)</div>
     <table class="ind-table">
       <thead><tr>
-        <th class="g" style="width:24%">Objetivo</th>
+        <th class="g" style="width:26%">Capacidad / Objetivo</th>
         <th style="width:26%">Indicador</th><th style="width:17%">Línea base</th>
-        <th style="width:20%">Meta</th><th style="width:13%">Frecuencia</th>
+        <th style="width:19%">Meta</th><th style="width:12%">Frecuencia</th>
       </tr></thead>
       <tbody id="indBody"></tbody>
     </table>
@@ -367,7 +403,7 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--gree
     <p class="modal-desc">Selecciona tu perfil:</p>
     <div class="role-opts">
       <div class="ropt sel" id="opt-visitor" onclick="selRole('visitor')"><h4>👁 Colaborador/a</h4><p>Solo lectura. Sin contraseña.</p></div>
-      <div class="ropt" id="opt-editor" onclick="selRole('editor')"><h4>✏️ Equipo Implementador</h4><p>Puede marcar avance en hitos. Requiere contraseña.</p></div>
+      <div class="ropt" id="opt-editor" onclick="selRole('editor')"><h4>✏️ Equipo Implementador</h4><p>Puede actualizar el estado de los hitos. Requiere contraseña.</p></div>
       <div class="ropt" id="opt-owner" onclick="selRole('owner')"><h4>🔑 Soporte</h4><p>Edición completa de contenido y configuración. Requiere contraseña.</p></div>
     </div>
     <div class="pw-field" id="pwField">
@@ -382,82 +418,179 @@ body.owner-mode .ind-table td[data-editable]{border-bottom:2px dashed var(--gree
 </div>
 
 <script>
-const LS='hpm_v6';
+const LS='hpm_mgiaa_v1';
 const CFG={passwords:{editor:'ei2026',owner:'s2026'}};
 const FB_URL='https://hoja-ruta-ambulatorio-default-rtdb.firebaseio.com';
+const FB_PATH='hitoStateMGIAA_v1';
 
 async function fbGet(path){try{const r=await fetch(`${FB_URL}/${path}.json`);if(!r.ok)return null;return await r.json();}catch(e){return null;}}
 async function fbSet(path,data){try{await fetch(`${FB_URL}/${path}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});}catch(e){console.warn('FB write error',e);}}
 
-const MITIG=["Marcha blanca y control progresivo","Gobernanza transversal","Implementación gradual","Comunicación estructurada","Participación temprana y trabajo colaborativo"];
-const HABS=[{name:"Gobernanza",desc:"Marco de autoridad, decisiones y responsabilidades transversales."},{name:"Espacios físicos",desc:"Infraestructura mínima para coordinación presencial efectiva."},{name:"Soporte TI",desc:"Sistemas, conectividad y herramientas digitales habilitadas."},{name:"Gestión del cambio",desc:"Escuchar resistencias y demostrar utilidad real en cada etapa."},{name:"Capacitación",desc:"Formación continua de equipos para sostener el nuevo modelo."},{name:"Estandarización",desc:"Procesos, registros y protocolos uniformes entre unidades."}];
-const LIBS=[
-  {name:"Diagnóstico y mapeo",et:"E1–E2",items:["Acompañamiento observacional en terreno (E1)","Mapeo de flujo real — situación actual (E1)","Mapa de experiencia del usuario y funcionario (E1)","Entrevistas breves con equipos operativos (E0–E1)","Revisión documental de flujos existentes (E1)","Levantamiento ágil de brechas operativas (E1)"]},
-  {name:"Diseño y codiseño",et:"E2–E3",items:["Talleres de codiseño con equipos (E2)","Diagramas de flujo objetivo (E2)","Matriz de roles y responsabilidades (E2)","Protocolos simples de operación (E3)","Revisión de modelos similares (E2)"]},
-  {name:"Seguimiento y datos",et:"E3–E5",items:["Tableros de indicadores de seguimiento (E3–E5)","Sistemas informáticos de apoyo (E3)","Automatización básica de flujos (E3)","Registros unificados y auditables (E3–E5)","Ciclos de mejora continua (E5)","Encuestas de experiencia usuaria y funcionaria (E5)"]},
-  {name:"Gestión del cambio y gobernanza",et:"E0–E5",items:["Taller de alineamiento con directivos (E0)","Mapeo de tomadores de decisiones (E0)","Comunicación interna estructurada (E0–E3)","Talleres de validación con jefaturas (E4)","Registro de acuerdos y compromisos (E0–E5)","Asesoría jurídica y administrativa (E4)"]}
+// ---- Estados de avance (reemplaza el checkbox binario) ----
+const STATES=['x','p','d','i']; // ciclo: por definir -> programado -> en desarrollo -> implementado
+const STATE_INFO={
+  i:{sym:'✓',color:'var(--st-i)',label:'Implementado / desarrollado',w:1},
+  d:{sym:'◐',color:'var(--st-d)',label:'En desarrollo',w:.5},
+  p:{sym:'○',color:'var(--st-p)',label:'Programado',w:.2},
+  x:{sym:'◇',color:'var(--st-x)',label:'Por definir / validar',w:0}
+};
+function nextState(s){const i=STATES.indexOf(s);return STATES[(i+1)%STATES.length];}
+
+const CAT_LBL={A:'Gobernanza del Acceso',B:'Desarrollo Capacidad Ambulatoria',C:'Coordinación de Trayectorias',D:'Continuidad Asistencial y Red',E:'Información para la Decisión'};
+
+const MITIG=["Marcha blanca y control progresivo por capacidad estratégica","Gobernanza institucional con autoridad transversal definida","Priorización explícita para evitar sobrecarga de los equipos","Comunicación estructurada del avance a jefaturas y equipos","Participación temprana de equipos clínicos, administrativos y de apoyo"];
+
+const HABS=[
+ {name:"Gobernanza",desc:"Autoridad, decisiones, prioridades, responsabilidades y mecanismos de escalamiento."},
+ {name:"Información y Datos",desc:"Calidad, consistencia, integración, disponibilidad y oportunidad de la información."},
+ {name:"Tecnología y Soporte Digital",desc:"Interoperabilidad, herramientas, automatización y soporte técnico disponible."},
+ {name:"Gestión del Cambio",desc:"Participación, comunicación, legitimidad y adopción por parte de los equipos."},
+ {name:"Capacidades de los Equipos",desc:"Competencias, formación continua y desarrollo profesional."},
+ {name:"Estandarización",desc:"Protocolos, criterios, registros y procedimientos compartidos."},
+ {name:"Infraestructura",desc:"Condiciones físicas mínimas para sostener la operación. No tiene el mismo peso estratégico que gobernanza e información."}
 ];
 
+const LIBS=[
+  {name:"Diagnóstico y caracterización",et:"E1",items:["Análisis de bases NAVA y listas de espera (E1)","Caracterización de demanda y entradas alternativas (E1)","Regularización de registros estadísticos (E1)","Entrevistas breves con equipos operativos (E1)","Revisión documental de flujos existentes (E1)"]},
+  {name:"Diseño y codiseño del modelo",et:"E2",items:["Talleres de codiseño con el equipo implementador (E2)","Documento Rector y modelo gráfico del MGIAA (E2)","Revisión de modelos de gobernanza comparados (E2)"]},
+  {name:"Gestión de demanda y trayectorias",et:"E3",items:["Visualizador institucional PAE (E3)","Protocolo de Navegadores en Red (E3)","Herramientas de priorización y categorización (E3)","Tableros de seguimiento de listas de espera (E3)"]},
+  {name:"Gobernanza, formalización y mejora continua",et:"E0–E5",items:["Registro de acuerdos y compromisos (E0)","Actos administrativos y resoluciones (E4)","Tablero institucional MGIAA/PAE (E5)","Ciclos periódicos de revisión y aprendizaje (E5)"]}
+];
+
+const GOV=[
+ {r:"Dirección del Hospital",d:"Define orientaciones estratégicas y condiciones institucionales para el desarrollo del MGIAA."},
+ {r:"Subdirección de Gestión Clínica",d:"Articula el Modelo con la gestión clínica y coordina condiciones institucionales para su implementación."},
+ {r:"Depto. de Atención Abierta",d:"Órgano técnico responsable de conducir el desarrollo, implementación, seguimiento y evaluación del MGIAA."},
+ {r:"CODE",d:"Instancia colegiada de análisis, monitoreo y apoyo a la toma de decisiones sobre oferta y demanda de especialidad."}
+];
+const GOV_CYCLE=["1. Definir prioridades","2. Coordinar y alinear","3. Implementar y asignar recursos","4. Monitorear con información","5. Evaluar y aprender"];
+
 const DEFAULT={
-  propDesc:"Análisis, articulación y mejora continua de los procesos ambulatorios y de la continuidad de la atención.",
-  objGeneral:"Diseñar e implementar de manera gradual el rediseño organizacional y funcional del proceso ambulatorio del Hospital Puerto Montt, fortaleciendo la coordinación, la gobernanza y la continuidad de la atención.",
-  objectives:["Levantar y analizar brechas operativas, organizacionales y de coordinación del proceso ambulatorio.","Diseñar e implementar mejoras progresivas orientadas a oportunidad, continuidad y experiencia de las personas.","Proponer e implementar el rediseño organizacional y funcional del proceso ambulatorio.","Fortalecer mecanismos de articulación entre unidades clínicas, administrativas y territoriales."],
-  indicators:[{ind:"N° de brechas documentadas y priorizadas",base:"Sin levantamiento formal",meta:"≥ 5 brechas priorizadas al cierre E1",freq:"Al cierre E1"},{ind:"N° de mejoras implementadas con seguimiento formal",base:"0 mejoras formalizadas",meta:"≥ 3 mejoras visibles al cierre E3",freq:"Trimestral"},{ind:"Estado de formalización del rediseño organizacional",base:"Sin estructura formal",meta:"Resolución emitida al cierre E4",freq:"Al cierre E4"},{ind:"N° de unidades con articulación activa documentada",base:"0 unidades articuladas",meta:"100% de unidades del modelo integradas",freq:"Semestral"}],
+  propDesc:"Instrumento vivo de implementación y seguimiento del Modelo de Gobernanza Integral de la Atención Abierta (MGIAA) del Hospital Puerto Montt.",
+  objGeneral:"Conducir la implementación progresiva del MGIAA, desarrollando sus cuatro capacidades estratégicas y formalizando su sistema de gobernanza e instrumentos derivados, hasta que su operación forme parte del funcionamiento habitual del Hospital.",
+  objectives:[
+    "Desarrollar la Gobernanza del Acceso para lograr un acceso efectivo, equitativo y oportuno a la atención especializada.",
+    "Desarrollar la Capacidad Ambulatoria para una respuesta oportuna y resolutiva a la demanda de especialidad.",
+    "Consolidar la Coordinación de Trayectorias Asistenciales para sostener la continuidad de la atención de cada persona.",
+    "Fortalecer la Continuidad Asistencial y Articulación en Red entre servicios, niveles y establecimientos."
+  ],
+  indicators:[
+    {ind:"Tiempo de espera y demanda pendiente por especialidad (corte P75)",base:"Línea base por establecer",meta:"Meta por definir",freq:"Mensual"},
+    {ind:"Oportunidad y resolutividad de la Consulta Nueva de Especialidad",base:"Línea base por establecer",meta:"Meta por definir",freq:"Mensual"},
+    {ind:"Contactabilidad, cumplimiento de indicaciones y pérdidas de seguimiento",base:"Requiere medición inicial",meta:"Meta por definir",freq:"Mensual"},
+    {ind:"Oportunidad y trazabilidad de contrarreferencia e interfaces con la Red",base:"Requiere medición inicial",meta:"Meta por definir",freq:"Trimestral"}
+  ],
   phases:[
-    {num:"Etapa 0",name:"Alineamiento\ny Gobernanza",focus:"Marco común antes de intervenir procesos.",plazo:"2 a 3 semanas",
+    {num:"Etapa 0",name:"Alineamiento\ny Conducción",focus:"Construir propósito, alcance, patrocinio y condiciones de gobernanza para conducir el cambio.",plazo:"Implementación inicial — 2026",resp:"Equipo Implementador / Dirección del Hospital",
      icon:`<svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="16" stroke="#2ecc71" stroke-width="2"/><path d="M12 20h16M20 12v16" stroke="#1a2e4a" stroke-width="2.5" stroke-linecap="round"/><circle cx="20" cy="20" r="4" fill="#2ecc71"/></svg>`,
-     obj:"Construir un marco común de trabajo antes de intervenir procesos, evitando que el rediseño se transforme en un mero cambio de organigrama sin impacto en la operación.",
-     objV:"Proponer e implementar el rediseño organizacional. Fortalecer articulación entre unidades.",
-     hitos:["Definir el equipo implementador","Validar el alcance del rediseño","Establecer patrocinio directivo explícito","Levantar mapa de tomadores de decisiones y actores clave","Definir la metodología de trabajo","Establecer hitos y cronograma general"],
-     riesgo:["Partir rediseñando estructuras sin entender el flujo real de la operación"],
-     etapaTools:["Taller de alineamiento con directivos","Entrevistas con actores clave","Mapeo de tomadores de decisiones","Acta de constitución del equipo implementador"],
-     products:["Acta de constitución del equipo implementador","Mapa de actores","Carta de navegación general","Documento de gobernanza","Definición de líneas estratégicas"]},
-    {num:"Etapa 1",name:"Diagnóstico\nOperacional Real",focus:"El proceso real, no el escrito ni el ideal.",plazo:"4 a 6 semanas",
+     obj:"Establecer las condiciones de conducción, alcance y método necesarias para implementar el MGIAA, evitando que el proceso se reduzca a un cambio de estructura.",
+     objV:"Etapa transversal: habilita el desarrollo de las cuatro capacidades estratégicas del MGIAA.",
+     hitos:[
+       {t:"Conformación del equipo impulsor de la implementación (Navegadores en Red / Unidad de Gestión Territorial)",s:'i'},
+       {t:"Definición del alcance del MGIAA en el Proceso Ambulatorio de Atención Especializada",s:'i'},
+       {t:"Patrocinio institucional formalizado por la Dirección del Hospital",s:'d'},
+       {t:"Articulación con Subdirección de Gestión Clínica y actores directivos",s:'d'},
+       {t:"Definición de la metodología de trabajo del equipo implementador",s:'i'},
+       {t:"Identificación de actores críticos del Proceso Ambulatorio",s:'d'},
+       {t:"Construcción de la Hoja de Ruta de implementación (este instrumento)",s:'i'}
+     ],
+     riesgo:["Avanzar sin patrocinio directivo explícito y sostenido en el tiempo","Confundir la conducción del equipo implementador con la conducción institucional del Modelo"],
+     etapaTools:["Taller de alineamiento con Dirección y Subdirección de Gestión Clínica","Mapeo de actores críticos","Registro de acuerdos y compromisos"],
+     products:["Documento Rector MGIAA","Hoja de Ruta de Implementación","Registro de conformación del equipo impulsor"]},
+    {num:"Etapa 1",name:"Comprender el\nProceso Real",focus:"Comprender cómo funciona realmente la Atención Abierta y dónde pierde valor.",plazo:"Implementación inicial — 2026",resp:"Equipo Implementador",
      icon:`<svg viewBox="0 0 40 40" fill="none"><circle cx="18" cy="18" r="11" stroke="#2ecc71" stroke-width="2"/><path d="M26 26l6 6" stroke="#1a2e4a" stroke-width="2.5" stroke-linecap="round"/><path d="M13 18h10M18 13v10" stroke="#1a2e4a" stroke-width="2" stroke-linecap="round"/></svg>`,
-     obj:"Entender cómo funciona realmente el proceso ambulatorio hoy. No el proceso descrito. No el ideal. El real.",
-     objV:"Levantar y analizar brechas operativas, organizacionales y de coordinación.",
-     hitos:["Mapear el flujo real de derivación y atención","Identificar duplicidades y registros paralelos","Detectar puntos de pérdida de información","Identificar cuellos de botella y tareas sin responsable","Medir tiempos muertos en el proceso","Analizar la experiencia de personas usuarias y equipo funcionario"],
-     riesgo:["Confundir síntomas con problemas estructurales. Los tiempos de espera suelen ser consecuencia de mala programación, trazabilidad deficiente o derivaciones mal gestionadas"],
-     etapaTools:["Acompañamiento observacional en terreno","Mapeo de flujo real","Mapa de experiencia del usuario y del funcionario","Entrevistas breves con equipos operativos","Revisión documental de flujos existentes","Levantamiento ágil de brechas"],
-     products:["Mapa del proceso real","Identificación de brechas críticas","Priorización de problemas","Diagnóstico validado por los equipos"]},
-    {num:"Etapa 2",name:"Diseño del\nModelo Objetivo",focus:"Cómo debería funcionar el proceso integrado.",plazo:"4 semanas",
+     obj:"Analizar el funcionamiento real del Proceso Ambulatorio de Atención Especializada, identificando fragmentaciones, duplicidades y brechas de coordinación que afectan la trayectoria de las personas.",
+     objV:"Aporta evidencia de base a las cuatro capacidades, en particular a Gobernanza del Acceso y Coordinación de Trayectorias Asistenciales.",
+     hitos:[
+       {t:"Caracterización de la demanda de especialidad y sus entradas alternativas",s:'d'},
+       {t:"Identificación de fragmentaciones, duplicidades y registros paralelos",s:'d'},
+       {t:"Mapeo de puntos críticos de la trayectoria asistencial",s:'d'},
+       {t:"Identificación de brechas de coordinación e interfaces críticas",s:'p'},
+       {t:"Regularización de registros estadísticos como base diagnóstica",s:'d'},
+       {t:"Análisis de experiencia de personas y equipos, cuando exista evidencia",s:'x'}
+     ],
+     riesgo:["Tratar los tiempos de espera como problema único, sin analizar programación, trazabilidad o derivación como causas de fondo","Diagnosticar con datos inconsistentes entre fuentes"],
+     etapaTools:["Análisis de bases de datos institucionales (NAVA, listas de espera)","Revisión documental de flujos existentes","Entrevistas breves con equipos operativos"],
+     products:["Caracterización de demanda por especialidad","Mapa de brechas críticas del proceso real"]},
+    {num:"Etapa 2",name:"Definir el\nModelo de Gestión",focus:"Definir cómo debe gobernarse integralmente el Proceso Ambulatorio de Atención Especializada.",plazo:"Implementación inicial — 2026",resp:"Departamento de Atención Abierta",
      icon:`<svg viewBox="0 0 40 40" fill="none"><rect x="6" y="8" width="28" height="24" rx="3" stroke="#2ecc71" stroke-width="2"/><path d="M12 16h16M12 22h10" stroke="#1a2e4a" stroke-width="2" stroke-linecap="round"/><circle cx="30" cy="28" r="5" fill="#2ecc71"/><path d="M28 28l1.5 1.5L32 26" stroke="#1a2e4a" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-     obj:"Definir cómo debería funcionar el proceso ambulatorio integrado, articulando roles transversales entre equipos, unidades y dispositivos intra y extrahospitalarios.",
-     objV:"Diseñar mejoras progresivas. Fortalecer articulación intrahospitalaria — con guiño a dispositivos y equipos extramuros (modelo centrífugo).",
-     hitos:["Diseñar el modelo de continuidad de la atención","Definir flujos integrados entre unidades y dispositivos","Definir roles transversales y gobernanza operacional","Establecer qué hace cada unidad, qué NO hace y dónde inicia y termina cada intervención","Integrar mecanismos de articulación extramuro en el diseño","Establecer qué información se registra una sola vez y cómo se comparte"],
-     riesgo:["Diseñar un modelo teóricamente correcto pero inviable en la operación real","Omitir la dimensión extramuro del diseño"],
-     etapaTools:["Talleres de codiseño con equipos","Diagramas de flujo objetivo","Matriz de roles y responsabilidades","Revisión de modelos similares en otros servicios de salud"],
-     products:["Modelo operativo objetivo con componente territorial","Diagramas de flujo integrados","Matriz de roles y responsabilidades","Arquitectura funcional del proceso ambulatorio"]},
-    {num:"Etapa 3",name:"Mejoras Tempranas\ne Implementación",focus:"Cambios concretos y visibles que validen el rediseño.",plazo:"2 a 4 meses",
+     obj:"Definir la arquitectura conceptual, las capacidades estratégicas y el sistema de gobernanza que orientan la conducción del Proceso Ambulatorio de Atención Especializada. Esta etapa presenta avance sustantivo.",
+     objV:"Etapa de definición transversal a las cuatro capacidades: establece objeto de gestión, resultado esperado y sistema de gobernanza de cada una.",
+     hitos:[
+       {t:"Arquitectura conceptual del MGIAA y Documento Rector formalizado",s:'i'},
+       {t:"Definición de la trayectoria asistencial como eje articulador del proceso",s:'i'},
+       {t:"Definición de las cuatro capacidades estratégicas, su objeto de gestión y resultado esperado",s:'i'},
+       {t:"Definición del sistema de gobernanza (Dirección → Subdirección → Depto. Atención Abierta → CODE)",s:'i'},
+       {t:"Definición del ciclo de gobernanza (priorizar, coordinar, implementar, monitorear, evaluar)",s:'d'},
+       {t:"Incorporación de CAEM y CAEO como dispositivos operacionales complementarios",s:'d'}
+     ],
+     riesgo:["Que el Documento Rector quede como marco conceptual sin operacionalización","Confundir capacidades estratégicas con unidades organizacionales"],
+     etapaTools:["Talleres de codiseño con el equipo implementador","Revisión de modelos de gobernanza en otros servicios de salud"],
+     products:["Documento Rector del MGIAA 2026–2030","Modelo gráfico del MGIAA"]},
+    {num:"Etapa 3",name:"Implementar\nCapacidades Prioritarias",focus:"Traducir el MGIAA en cambios operacionales concretos y verificables.",plazo:"Implementación prioritaria — 2026–2027",resp:"Departamento de Atención Abierta / equipos participantes",
      icon:`<svg viewBox="0 0 40 40" fill="none"><path d="M20 6l3.5 7 7.5 1.1-5.5 5.3 1.3 7.6L20 23.5l-6.8 3.5 1.3-7.6L9 14.1l7.5-1.1z" stroke="#2ecc71" stroke-width="2" stroke-linejoin="round"/><path d="M14 32h12M17 36h6" stroke="#1a2e4a" stroke-width="2" stroke-linecap="round"/></svg>`,
-     obj:"Generar cambios concretos y visibles que validen el rediseño y disminuyan la resistencia. Sin resultados tempranos, el proceso pierde legitimidad.",
-     objV:"Diseñar e implementar mejoras progresivas. Fortalecer articulación entre unidades.",
-     hitos:["Implementar mecanismos de acompañamiento activo de personas en lista de espera","Establecer criterios de categorización y priorización de la demanda","Diseñar dispositivos o unidades de gestión: demanda, oferta, acompañamiento y continuidad","Coordinar operativamente los mecanismos de articulación con la red asistencial","Reducir registros paralelos y estandarizar el registro","Poner en marcha tableros de indicadores de seguimiento"],
-     riesgo:["Sobrecargar los equipos con demasiados cambios simultáneos","Implementar sin trazabilidad ni registro formal de actividad"],
-     etapaTools:["Sistemas informáticos de apoyo disponibles","Tableros de indicadores de seguimiento","Protocolos simples y trazabilidad mínima","Automatización básica de flujos repetitivos"],
-     products:["Mejoras visibles en la operación","Dispositivos o unidades de gestión en funcionamiento inicial","Indicadores tempranos de desempeño","Validación operativa del modelo"]},
-    {num:"Etapa 4",name:"Gobernanza y\nFormalización Organizacional",focus:"La estructura sigue al proceso, no al revés.",plazo:"1 a 2 meses",
+     obj:"Desarrollar de manera progresiva las cuatro capacidades estratégicas del MGIAA mediante iniciativas concretas, organizadas por capacidad y sostenidas con información para la decisión.",
+     objV:"Etapa central de desarrollo de las cuatro capacidades estratégicas del MGIAA.",
+     hitos:[
+       {t:"Plan de Trabajo Integrado PAE y gestión de listas de espera",s:'d',c:'A'},
+       {t:"Depuración de lista de espera de controles y sinceramiento de demanda",s:'d',c:'A'},
+       {t:"Piloto de Tiempo Máximo de Espera (TMT) Infantil",s:'d',c:'A'},
+       {t:"Criterios de categorización y priorización de la demanda",s:'p',c:'A'},
+       {t:"Programación, agendas y optimización de cupos",s:'p',c:'B'},
+       {t:"Estrategias de aumento de Consulta Nueva y disminución de controles sin valor agregado",s:'p',c:'B'},
+       {t:"Investigación aplicada con Universidad San Sebastián sobre resolutividad de Consulta Nueva",s:'d',c:'B'},
+       {t:"Diversificación de modalidades de atención y salud digital",s:'p',c:'B'},
+       {t:"Protocolo y operación de Navegadores en Red",s:'i',c:'C'},
+       {t:"Gestión de contactabilidad, no contactabilidad y recuperación de personas",s:'d',c:'C'},
+       {t:"Articulación entre Navegadores en Red y Gestión Oncológica",s:'d',c:'C'},
+       {t:"Mecanismos progresivos de gestión de casos en lista de espera",s:'d',c:'C'},
+       {t:"Implementación de lineamientos vigentes de contrarreferencia",s:'p',c:'D'},
+       {t:"Definición de responsables institucionales de altas administrativas/responsables",s:'x',c:'D'},
+       {t:"Coordinación con APS y hospitales de la Red",s:'d',c:'D'},
+       {t:"Operativos territoriales de especialidad en comunas de la Red Reloncaví",s:'d',c:'D'},
+       {t:"Visualizador institucional PAE (demanda, programación, producción, NSP)",s:'d',c:'E'},
+       {t:"Regularización de registros estadísticos y consistencia entre fuentes",s:'d',c:'E'}
+     ],
+     riesgo:["Sobrecargar a los equipos con iniciativas simultáneas sin priorización","Digitalizar procesos deficientes sin rediseñarlos","Depender de soluciones manuales sostenidas por el equipo implementador"],
+     etapaTools:["Tableros de indicadores de seguimiento","Automatización básica de flujos repetitivos","Herramientas de gestión de demanda y priorización"],
+     products:["Visualizador institucional PAE","Protocolo de Navegadores en Red","Caracterización de demanda por especialidad","Reportes de seguimiento de listas de espera"]},
+    {num:"Etapa 4",name:"Formalizar Gobernanza\ny Operación",focus:"Formalizar responsabilidades, reglas, estructuras e interfaces necesarias para sostener el MGIAA.",plazo:"Implementación inicial — 2026–2027",resp:"Dirección del Hospital / Departamento de Atención Abierta",
      icon:`<svg viewBox="0 0 40 40" fill="none"><rect x="14" y="4" width="12" height="8" rx="2" stroke="#2ecc71" stroke-width="2"/><rect x="4" y="28" width="12" height="8" rx="2" stroke="#1a2e4a" stroke-width="2"/><rect x="24" y="28" width="12" height="8" rx="2" stroke="#1a2e4a" stroke-width="2"/><path d="M20 12v8M10 28v-8h20v8" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-     obj:"Alinear la estructura organizacional con el modelo operativo que ya está funcionando. Primero el proceso, después el organigrama.",
-     objV:"Proponer e implementar el rediseño organizacional y funcional del proceso ambulatorio.",
-     hitos:["Definir la estructura organizacional resultante del análisis colaborativo","Establecer dependencias, líneas de reporte y gobernanza transversal","Formalizar roles y funciones según el modelo operativo validado","Tramitar los actos administrativos que correspondan"],
-     riesgo:["Convertir la formalización en una disputa de poder entre unidades","Adelantar la definición de estructura antes de validar el modelo operativo"],
-     etapaTools:["Talleres de validación con jefaturas y equipos","Asesoría jurídica y administrativa","Actos administrativos y resoluciones"],
-     products:["Estructura organizacional definida y validada","Roles y funciones formalizados","Modelo institucionalizado mediante actos administrativos"]},
-    {num:"Etapa 5",name:"Consolidación y\nMejora Continua",focus:"El rediseño como capacidad institucional permanente.",plazo:"6 a 12 meses",
+     obj:"Formalizar mediante instrumentos institucionales las responsabilidades, protocolos, interfaces y estructura organizacional necesarias para sostener la operación del MGIAA. La estructura es un habilitante de la operación y del modelo, no su resultado.",
+     objV:"Rediseñar el organigrama no es rediseñar la operación.",
+     hitos:[
+       {t:"Formalización institucional del Documento Rector MGIAA",s:'d'},
+       {t:"Plan de Implementación formalizado con prioridades, plazos y responsables",s:'d'},
+       {t:"Actualización organizacional del Departamento de Atención Abierta (funciones, responsabilidades, dependencias)",s:'x'},
+       {t:"Diseño y formalización del EAR (Espera de Atención de Especialidades)",s:'d'},
+       {t:"Habilitación y finalización del proceso RCA",s:'x'},
+       {t:"Formalización de protocolos críticos y responsable institucional de contrarreferencia",s:'x'},
+       {t:"Gobernanza formal del CODE y del modelo de agendamiento",s:'x'}
+     ],
+     riesgo:["Modificar la estructura organizacional sin haber validado el modelo operativo","Convertir la formalización en una disputa de atribuciones entre unidades"],
+     etapaTools:["Talleres de validación con jefaturas","Asesoría jurídica y administrativa","Actos administrativos y resoluciones"],
+     products:["Manual de organización del Departamento de Atención Abierta","Protocolos y procedimientos formalizados","Resoluciones y actos administrativos"]},
+    {num:"Etapa 5",name:"Medir, Aprender\ny Escalar",focus:"Transformar el MGIAA en una capacidad institucional permanente basada en resultados.",plazo:"Consolidación e institucionalización — 2027–2030",resp:"Departamento de Atención Abierta / CODE",
      icon:`<svg viewBox="0 0 40 40" fill="none"><path d="M8 30l8-10 6 6 8-14" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="12" r="4" fill="#2ecc71"/><path d="M6 34h28" stroke="#1a2e4a" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-     obj:"Transformar el rediseño en una capacidad institucional permanente. Sostener, evaluar y mejorar continuamente el modelo.",
-     objV:"Fortalecer articulación entre unidades. Diseñar e implementar mejoras sostenidas en el tiempo.",
-     hitos:["Monitoreo con indicadores clave: tiempos efectivos, no presentación, contactabilidad, trazabilidad","Reevaluación periódica del modelo y sus componentes","Gestión del cambio sostenida en el tiempo","Formación continua de equipos en el nuevo modelo","Integración digital progresiva","Mejora continua basada en datos y experiencia de personas y equipos"],
-     riesgo:["Volver a trabajar por departamentos aislados una vez disminuida la presión del cambio","Perder la gobernanza transversal conquistada durante la implementación"],
-     etapaTools:["Tableros de indicadores de seguimiento","Ciclos de mejora continua — revisión periódica","Encuestas de experiencia usuaria y funcionaria","Registros unificados y auditables"],
-     products:["Modelo sostenible de continuidad de la atención","Gobernanza permanente y transversal","Cultura organizacional orientada a la continuidad","Reducción sostenida de la fragmentación asistencial"]}
+     obj:"Instalar un sistema de evaluación basado en los cuatro resultados del MGIAA (acceso, capacidad, trayectoria, red), medir resultados y no solamente actividad, y escalar las intervenciones que demuestren efectividad.",
+     objV:"Medir resultados y no solamente actividad.",
+     hitos:[
+       {t:"Tablero institucional MGIAA/PAE",s:'x'},
+       {t:"Definición de líneas base e indicadores de acceso, capacidad, trayectoria y red",s:'x'},
+       {t:"Evaluación de Navegadores en Red y de intervenciones implementadas",s:'p'},
+       {t:"Ciclos periódicos de revisión y aprendizaje institucional",s:'x'},
+       {t:"Formación continua y desarrollo de competencias de los equipos",s:'p'},
+       {t:"Escalamiento de intervenciones exitosas a otras especialidades o unidades",s:'x'}
+     ],
+     riesgo:["Medir actividad en lugar de resultados","Perder el impulso inicial una vez disminuida la presión del cambio","Depender excesivamente del equipo implementador para sostener la medición"],
+     etapaTools:["Tableros de indicadores de seguimiento","Ciclos periódicos de revisión","Encuestas de experiencia de personas y equipos"],
+     products:["Tablero MGIAA/PAE","Evaluaciones de resultados por capacidad estratégica","Planes de mejora derivados de la evaluación"]}
   ]
 };
 
 let role='visitor', selModalRole='visitor';
 let D=JSON.parse(JSON.stringify(DEFAULT));
-let HS=D.phases.map(p=>p.hitos.map(()=>false));
+let HS=D.phases.map(p=>p.hitos.map(h=>h.s));
 let activePhase=null;
 
 function lsLoad(){
@@ -472,25 +605,31 @@ function lsLoad(){
 }
 function lsSave(){try{localStorage.setItem(LS,JSON.stringify({data:D,role}));}catch(e){console.warn(e);}}
 
+function sanitizeHS(){
+  // Garantiza que HS tenga exactamente el mismo largo que los hitos definidos en D (evita desincronía).
+  D.phases.forEach((p,i)=>{
+    if(!Array.isArray(HS[i]))HS[i]=[];
+    const t=p.hitos.length;
+    while(HS[i].length<t)HS[i].push(p.hitos[HS[i].length]?p.hitos[HS[i].length].s:'x');
+    if(HS[i].length>t)HS[i]=HS[i].slice(0,t);
+    HS[i]=HS[i].map(v=>STATES.includes(v)?v:(v===true?'i':v===false?'x':'x'));
+  });
+}
+
 async function remoteLoadHS(){
   try{
-    const saved=await fbGet('hitoState');
+    const saved=await fbGet(FB_PATH);
     if(saved!==null){
       const toArr=v=>Array.isArray(v)?v:Object.keys(v).sort((a,b)=>a-b).map(k=>v[k]);
       const raw=toArr(saved);
-      HS=raw.map((row,i)=>{
-        const arr=Array.isArray(row)?row:Object.keys(row).sort((a,b)=>a-b).map(k=>!!row[k]);
-        const t=D.phases[i]?D.phases[i].hitos.length:0;
-        while(arr.length<t)arr.push(false);
-        return arr.map(v=>!!v);
-      });
-      D.phases.forEach((_,i)=>{if(!HS[i])HS[i]=D.phases[i].hitos.map(()=>false);});
+      HS=raw.map(row=>Array.isArray(row)?row:Object.keys(row).sort((a,b)=>a-b).map(k=>row[k]));
     }
   }catch(e){console.warn('Firebase load error',e);}
+  sanitizeHS();
   updProg();
   if(activePhase!==null)renderDetail(activePhase);
 }
-async function remoteSaveHS(){await fbSet('hitoState',HS);}
+async function remoteSaveHS(){await fbSet(FB_PATH,HS);}
 
 // ROLE
 function applyRole(){
@@ -503,10 +642,6 @@ function applyRole(){
   const og=document.getElementById('objGeneralText');
   if(og)og.contentEditable=role==='owner'?'true':'false';
   const isEd=role==='editor'||role==='owner';
-  // show restricted elements for editor/owner
-  ['libBtn','habBtn','habBtn2','tabIndicadores'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.style.display=isEd?'':el.style.display==='block'?'block':'none';
-  });
   if(isEd){
     document.getElementById('libBtn').style.display='';
     document.getElementById('habBtn').style.display='';
@@ -517,7 +652,6 @@ function applyRole(){
     document.getElementById('habBtn').style.display='none';
     document.getElementById('habBtn2').style.display='none';
     document.getElementById('tabIndicadores').style.display='none';
-    // close if open
     ['libC','habC','habC2'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   }
 }
@@ -562,33 +696,51 @@ function toggleIndExp(i){const p=document.getElementById('ind-exp-'+i);if(p)p.cl
 function savePhase(pi,f,el){D.phases[pi][f]=el.textContent;lsSave();}
 function savePhaseName(i,el){D.phases[i].name=el.textContent;lsSave();}
 function savePhaseFocus(i,el){D.phases[i].focus=el.textContent;lsSave();}
-function saveHito(pi,hi,el){D.phases[pi].hitos[hi]=el.textContent;lsSave();}
-function delHito(pi,hi){D.phases[pi].hitos.splice(hi,1);HS[pi].splice(hi,1);renderDetail(pi);updProg();lsSave();}
-function addHito(pi){D.phases[pi].hitos.push('Nuevo hito.');HS[pi].push(false);renderDetail(pi);updProg();lsSave();}
+function saveHito(pi,hi,el){D.phases[pi].hitos[hi].t=el.textContent;lsSave();}
+function delHito(pi,hi){D.phases[pi].hitos.splice(hi,1);HS[pi].splice(hi,1);renderDetail(pi);updProg();lsSave();remoteSaveHS();}
+function addHito(pi){D.phases[pi].hitos.push({t:'Nuevo hito.',s:'x'});HS[pi].push('x');renderDetail(pi);updProg();lsSave();remoteSaveHS();}
 function saveListItem(pi,f,idx,el){D.phases[pi][f][idx]=el.textContent;lsSave();}
 function delListItem(pi,f,idx){D.phases[pi][f].splice(idx,1);renderDetail(pi);lsSave();}
 function addListItem(pi,f){D.phases[pi][f].push('Nuevo ítem.');renderDetail(pi);lsSave();}
 
 // PROGRESS
-function etaDone(i){return HS[i]?HS[i].filter(Boolean).length:0;}
+function phaseCounts(i){
+  const c={i:0,d:0,p:0,x:0};
+  (HS[i]||[]).forEach(s=>{if(c[s]!==undefined)c[s]++;});
+  return c;
+}
+function phaseWeighted(i){
+  const t=D.phases[i].hitos.length;if(t===0)return 0;
+  const sum=(HS[i]||[]).reduce((a,s)=>a+(STATE_INFO[s]?STATE_INFO[s].w:0),0);
+  return sum/t;
+}
 function updProg(){
-  const tot=D.phases.reduce((a,p)=>a+p.hitos.length,0);
-  const done=HS.reduce((a,s)=>a+s.filter(Boolean).length,0);
-  const pct=tot>0?Math.round((done/tot)*100):0;
-  document.getElementById('pctLbl').textContent=pct+'% — '+done+'/'+tot+' hitos completados';
+  let totC={i:0,d:0,p:0,x:0},totHitos=0,wSum=0;
+  D.phases.forEach((p,i)=>{
+    const c=phaseCounts(i);totC.i+=c.i;totC.d+=c.d;totC.p+=c.p;totC.x+=c.x;
+    totHitos+=p.hitos.length;wSum+=phaseWeighted(i)*p.hitos.length;
+  });
+  const pct=totHitos>0?Math.round((wSum/totHitos)*100):0;
+  document.getElementById('pctLbl').textContent=pct+'% ponderado';
+  document.getElementById('pbCounts').innerHTML=
+    `<span style="color:var(--st-i)">✓ ${totC.i} implementados</span>`+
+    `<span style="color:var(--st-d)">◐ ${totC.d} en desarrollo</span>`+
+    `<span style="color:var(--st-p)">○ ${totC.p} programados</span>`+
+    `<span style="color:var(--st-x)">◇ ${totC.x} por definir/validar</span>`;
   document.getElementById('pbFill').style.width=pct+'%';
   document.querySelectorAll('.pb-stage').forEach((el,i)=>{
-    const c=etaDone(i),t=D.phases[i]?D.phases[i].hitos.length:0;
+    const w=phaseWeighted(i);
     el.classList.remove('done','partial');
-    if(t>0&&c===t)el.classList.add('done');else if(c>0)el.classList.add('partial');
-    el.querySelector('.pb-dot').textContent=(c===t&&t>0)?'✓':'';
+    if(w>=.85)el.classList.add('done');else if(w>0)el.classList.add('partial');
+    el.querySelector('.pb-dot').textContent=w>=.85?'✓':'';
   });
   D.phases.forEach((_,i)=>{
     const el=document.getElementById('prog-'+i);if(!el)return;
-    const c=etaDone(i),t=D.phases[i].hitos.length;
-    if(c===0){el.textContent='';el.style.color='transparent';}
-    else if(c===t){el.textContent='✓ completada';el.style.color='#2ecc71';}
-    else{el.textContent=Math.round((c/t)*100)+'% avance';el.style.color='#f0a500';}
+    const c=phaseCounts(i),t=D.phases[i].hitos.length;
+    if(t===0){el.textContent='';return;}
+    el.textContent=`${c.i}/${t} implementados`;
+    const w=phaseWeighted(i);
+    el.style.color=w>=.85?'#2ecc71':w>0?'#f0a500':'#aaa';
   });
   lsSave();
 }
@@ -614,6 +766,13 @@ function renderObjs(){
     </div>`:''}`;
     g.appendChild(d);
   });
+}
+
+function renderGov(){
+  const g=document.getElementById('govGrid');if(g){g.innerHTML=GOV.map((x,i)=>
+    `<div class="gov-card"><div class="gr">${x.r}</div><div class="gd">${x.d}</div></div>`
+  ).join('');}
+  const c=document.getElementById('govCycle');if(c){c.innerHTML=GOV_CYCLE.map(s=>`<span class="gov-step">${s}</span>`).join('');}
 }
 
 function renderPB(){
@@ -648,15 +807,29 @@ function renderTL(){
   });
 }
 
+function stPill(pi,hi,s,ed){
+  const info=STATE_INFO[s]||STATE_INFO.x;
+  return `<div class="st-pill ${ed?'can-cycle':''}" id="cb-${pi}-${hi}" style="background:${info.color}" title="${info.label}${ed?' — clic para cambiar':''}" onclick="${ed?`cycleHito(${pi},${hi})`:''}">${info.sym}</div>`;
+}
+function stLegendHTML(){
+  return STATES.map(s=>`<span><span class="leg-dot" style="background:${STATE_INFO[s].color}"></span>${STATE_INFO[s].sym} ${STATE_INFO[s].label}</span>`).join('');
+}
+
 function renderDetail(i){
   const p=D.phases[i];
   const ow=role==='owner',ed=role==='editor'||role==='owner',vis=role==='visitor';
-  const hitosH=p.hitos.map((h,j)=>`
-    <div class="hito-item">
-      <div class="hito-cb ${HS[i][j]?'checked':''} ${ed?'can-check':''}" id="cb-${i}-${j}" onclick="${ed?`toggleHito(${i},${j})`:''}">&nbsp;</div>
-      <div class="hito-txt ${HS[i][j]?'checked':''}" id="ht-${i}-${j}" ${ow?`contenteditable="true" data-editable onblur="saveHito(${i},${j},this)"`:''}>${h}</div>
+  let hitosH='';
+  let lastCat=null;
+  p.hitos.forEach((h,j)=>{
+    if(h.c&&h.c!==lastCat){hitosH+=`<div class="cat-hd">${CAT_LBL[h.c]||h.c}</div>`;lastCat=h.c;}
+    else if(!h.c)lastCat=null;
+    const s=(HS[i]&&HS[i][j])||h.s||'x';
+    hitosH+=`<div class="hito-item">
+      ${stPill(i,j,s,ed)}
+      <div class="hito-txt" id="ht-${i}-${j}" ${ow?`contenteditable="true" data-editable onblur="saveHito(${i},${j},this)"`:''}>${h.t}</div>
       <span class="ec"><button class="btn btn-del btn-sm" onclick="delHito(${i},${j})">×</button></span>
-    </div>`).join('');
+    </div>`;
+  });
   const listH=(arr,f,b)=>arr.map((item,j)=>`
     <div class="list-item">
       <span class="list-b">${b}</span>
@@ -667,7 +840,7 @@ function renderDetail(i){
     `<div class="ds risk"><h3>⚠ Riesgo crítico</h3>${listH(p.riesgo,'riesgo','⚠')}
     <div class="ec" style="margin-top:8px"><button class="btn btn-dark btn-sm" onclick="addListItem(${i},'riesgo')">+ Agregar</button></div></div>`;
   const prodSec=vis?'':
-    `<div class="ds products"><h3>◆ Productos esperados</h3>${listH(p.products,'products','◆')}
+    `<div class="ds products"><h3>◆ Productos / evidencia</h3>${listH(p.products,'products','◆')}
     <div class="ec" style="margin-top:8px"><button class="btn btn-dark btn-sm" onclick="addListItem(${i},'products')">+ Agregar</button></div></div>`;
   const mitSec=vis?'':
     `<div class="ds mit"><h3>🛡 Estrategias de mitigación</h3>
@@ -678,25 +851,26 @@ function renderDetail(i){
     <div class="ec" style="margin-top:8px"><button class="btn btn-dark btn-sm" onclick="addListItem(${i},'etapaTools')">+ Agregar</button></div></div>`;
   const objvSec=vis?'':
     `<div class="dobjv">
-      <span class="lbl">Vinculación con objetivos del proceso</span>
+      <span class="lbl">Vinculación con las capacidades del MGIAA</span>
       <span ${ow?`contenteditable="true" data-editable onblur="savePhase(${i},'objV',this)"`:''}>${p.objV}</span>
     </div>`;
 
   document.getElementById('detailInner').innerHTML=`
     <div class="dtop">
       <div class="dtitle"><span>${p.num}</span> — <span ${ow?`contenteditable="true" data-editable onclick="event.stopPropagation()" onblur="savePhaseName(${i},this)"`:''}>${p.name.replace(/\n/,' ')}</span></div>
-      ${vis?'':'<button class="plazo-btn" onclick="togPlazo(this)">⏱ Ver plazo</button>'}
+      ${vis?'':'<button class="plazo-btn" onclick="togPlazo(this)">⏱ Ver plazo y responsable</button>'}
     </div>
-    ${vis?'':`<div class="plazo-box" id="plazoBox">Plazo estimado: <strong ${ow?`contenteditable="true" data-editable onblur="savePhase(${i},'plazo',this)"`:''}>${p.plazo}</strong> — referencial.</div>`}
+    <div class="dmeta"><span class="mchip">Estado etapa: ${phaseCounts(i).i}/${p.hitos.length} implementados</span></div>
+    ${vis?'':`<div class="plazo-box" id="plazoBox">Horizonte: <strong ${ow?`contenteditable="true" data-editable onblur="savePhase(${i},'plazo',this)"`:''}>${p.plazo}</strong> — referencial. Responsable institucional: <strong ${ow?`contenteditable="true" data-editable onblur="savePhase(${i},'resp',this)"`:''}>${p.resp}</strong></div>`}
     <div class="dobj"><h3>Objetivo de la etapa</h3>
       <p ${ow?`contenteditable="true" data-editable onblur="savePhase(${i},'obj',this)"`:''}>${p.obj}</p>
     </div>
     ${objvSec}
     <div class="dgrid">
-      <div class="ds hitos"><h3>✓ Hitos${ed?' — marcar avance':''}</h3>
+      <div class="ds hitos"><h3>✓ Hitos${ed?' — clic en el ícono para actualizar estado':''}</h3>
         ${hitosH}
         <div class="ec" style="margin-top:8px"><button class="btn btn-dark btn-sm" onclick="addHito(${i})">+ Agregar hito</button></div>
-        ${!ed?'<div class="no-access">Requiere acceso de Equipo Implementador o Soporte para marcar avance.</div>':''}
+        ${ed?`<div class="state-legend">${stLegendHTML()}</div>`:'<div class="no-access">Requiere acceso de Equipo Implementador o Soporte para actualizar el estado.</div>'}
       </div>
       <div>${riesgoSec}${prodSec}${mitSec}</div>
     </div>
@@ -706,7 +880,7 @@ function renderDetail(i){
 function renderIndicadores(){
   const tb=document.getElementById('indBody');tb.innerHTML='';
   const ow=role==='owner';
-  document.getElementById('indNote').textContent=ow?'🔑 Haz clic en cualquier celda para editar.':'Solo Soporte puede editar los indicadores.';
+  document.getElementById('indNote').textContent=ow?'🔑 Haz clic en cualquier celda para editar. Transversalmente, incorporar experiencia de las personas y, cuando sea factible, de los equipos clínicos.':'Indicadores organizados según los cuatro resultados del MGIAA: acceso, capacidad, trayectoria y red. Solo Soporte puede editarlos.';
   D.objectives.forEach((obj,i)=>{
     const ind=D.indicators[i]||{ind:'',base:'',meta:'',freq:''};
     const tr=document.createElement('tr');
@@ -719,12 +893,13 @@ function renderIndicadores(){
   });
 }
 
-function toggleHito(i,j){
+function cycleHito(i,j){
   if(role!=='editor'&&role!=='owner')return;
-  HS[i][j]=!HS[i][j];
-  const cb=document.getElementById('cb-'+i+'-'+j),ht=document.getElementById('ht-'+i+'-'+j);
-  if(cb)cb.className='hito-cb'+(HS[i][j]?' checked':'')+(role!=='visitor'?' can-check':'');
-  if(ht)ht.className='hito-txt'+(HS[i][j]?' checked':'');
+  if(!HS[i])HS[i]=[];
+  const cur=HS[i][j]||'x';
+  HS[i][j]=nextState(cur);
+  const cb=document.getElementById('cb-'+i+'-'+j);
+  if(cb){const info=STATE_INFO[HS[i][j]];cb.style.background=info.color;cb.textContent=info.sym;cb.title=info.label+' — clic para cambiar';}
   updProg();remoteSaveHS();
 }
 function togglePhase(i){
@@ -735,7 +910,7 @@ function togglePhase(i){
   document.getElementById('detailPanel').classList.add('show');
   setTimeout(()=>document.getElementById('detailPanel').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
-function togPlazo(btn){const b=document.getElementById('plazoBox');b.classList.toggle('show');btn.textContent=b.classList.contains('show')?'⏱ Ocultar plazo':'⏱ Ver plazo';}
+function togPlazo(btn){const b=document.getElementById('plazoBox');b.classList.toggle('show');btn.textContent=b.classList.contains('show')?'⏱ Ocultar':'⏱ Ver plazo y responsable';}
 function closeDetail(){activePhase=null;document.querySelectorAll('.phase-card').forEach(c=>c.classList.remove('active'));document.getElementById('detailPanel').classList.remove('show');}
 
 function renderHabs(id){
@@ -752,19 +927,23 @@ function renderMatriz(){
   const thP=document.getElementById('th-prod'),thR=document.getElementById('th-risk');
   if(thP)thP.style.display=vis?'none':'';
   if(thR)thR.style.display=vis?'none':'';
-  D.phases.forEach(p=>{
+  D.phases.forEach((p,i)=>{
     const tr=document.createElement('tr');
+    const hitosBadges=p.hitos.map((h,j)=>{
+      const s=(HS[i]&&HS[i][j])||h.s||'x';const info=STATE_INFO[s];
+      return `<span class="badge"><span class="bdot" style="background:${info.color}"></span>${h.t}</span>`;
+    }).join('');
     tr.innerHTML=`<td><strong>${p.num}</strong><br><span style="color:#555">${p.name.replace(/\n/,' ')}</span></td>
       <td>${p.objV}</td>
-      <td>${p.hitos.map(h=>`<span class="badge">${h}</span>`).join('')}</td>
+      <td>${hitosBadges}</td>
       ${vis?'':
         `<td>${p.products.map(pr=>`<span class="badge prod">${pr}</span>`).join('')}</td>
          <td>${p.riesgo.map(r=>`<span class="badge risk">${r}</span>`).join('')}</td>`}`;
     tb.appendChild(tr);
   });
+  const leg=document.getElementById('matrizLegend');if(leg)leg.innerHTML=stLegendHTML();
 }
 
-// togSec usa inline style directamente — no depende de clases CSS
 function togSec(id,btnId){
   const el=document.getElementById(id),btn=document.getElementById(btnId);
   if(!el)return;
@@ -793,14 +972,16 @@ function generatePDF(opt){
 }
 function buildPrint(opt){
   const withProg=opt===2||opt===4,withHitos=opt===3||opt===4;
-  const totalH=D.phases.reduce((a,p)=>a+p.hitos.length,0),doneH=HS.reduce((a,s)=>a+s.filter(Boolean).length,0);
-  const pct=totalH>0?Math.round((doneH/totalH)*100):0;
+  let totC={i:0,d:0,p:0,x:0},totHitos=0,wSum=0;
+  D.phases.forEach((p,i)=>{const c=phaseCounts(i);totC.i+=c.i;totC.d+=c.d;totC.p+=c.p;totC.x+=c.x;totHitos+=p.hitos.length;wSum+=phaseWeighted(i)*p.hitos.length;});
+  const pct=totHitos>0?Math.round((wSum/totHitos)*100):0;
   const fecha=new Date().toLocaleDateString('es-CL',{year:'numeric',month:'long',day:'numeric'});
-  let h=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Hoja de Ruta HPM</title>
+  let h=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Hoja de Ruta MGIAA — HPM</title>
 <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',Arial,sans-serif;color:#1a2e4a;font-size:12px;padding:20px;background:#fff;line-height:1.5}
 @page{size:A4 landscape;margin:12mm}@media print{body{padding:0}.no-print{display:none!important}}
 .hdr{display:flex;align-items:center;gap:14px;border-bottom:3px solid #1a2e4a;padding-bottom:12px;margin-bottom:10px}
 .hdr-text h1{font-size:14px;text-transform:uppercase;line-height:1.35;font-weight:700}.hdr-text h1 span{color:#27ae60}
+.hdr-text .sub{font-size:10px;color:#888;font-weight:600;margin-top:2px}
 .memento{font-size:9px;color:#888;font-style:italic;text-align:center;padding:5px;margin-bottom:12px}
 .prop{border-left:4px solid #27ae60;padding:9px 13px;background:#f4fbf7;margin-bottom:12px;border-radius:0 8px 8px 0}
 .prop h2{font-size:10px;text-transform:uppercase;color:#27ae60;letter-spacing:.8px;margin-bottom:3px;font-weight:700}
@@ -813,6 +994,7 @@ function buildPrint(opt){
 .prog-box{border:1.5px solid #1a2e4a;border-radius:7px;padding:8px 12px;margin-bottom:12px}
 .prog-top{display:flex;justify-content:space-between;margin-bottom:5px}
 .prog-top span{font-size:10px;font-weight:700;text-transform:uppercase}.prog-pct{color:#27ae60;font-size:13px;font-weight:700}
+.prog-counts{display:flex;gap:10px;font-size:9px;font-weight:700;margin-bottom:7px}
 .pbar{height:7px;background:#e0e8f0;border-radius:4px;margin-bottom:8px;overflow:hidden}
 .pbar-fill{height:7px;background:#27ae60;border-radius:4px}
 .prog-stages{display:flex}.pstage{flex:1;text-align:center}
@@ -834,22 +1016,21 @@ function buildPrint(opt){
 .pd-body{padding:8px 11px}.pd-body h4{font-size:9px;font-weight:700;text-transform:uppercase;color:#1a2e4a;margin-bottom:5px}
 .hlist{display:grid;grid-template-columns:repeat(2,1fr);gap:3px}
 .hrow{display:flex;align-items:flex-start;gap:5px;padding:2px 0}
-.hcb{width:12px;height:12px;border:1.5px solid #27ae60;border-radius:2px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;background:#fff}
-.hcb.done{background:#27ae60;color:#fff}
-.htxt{font-size:9.5px;line-height:1.35;color:#1a2e4a}.htxt.done{text-decoration:line-through;color:#bbb}
+.hst{width:13px;height:13px;border-radius:3px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff}
+.htxt{font-size:9.5px;line-height:1.35;color:#1a2e4a}
 .print-footer{border-top:1px solid #e0e8f0;padding-top:7px;margin-top:12px;font-size:9px;color:#aaa;text-align:right;font-style:italic}
 .print-btn{background:#1a2e4a;color:#2ecc71;border:none;border-radius:7px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px}
 </style></head><body>
 <button class="print-btn no-print" onclick="window.print()">🖨 Imprimir / Guardar como PDF</button>`;
   h+=`<div class="hdr"><svg width="72" height="42" viewBox="0 0 88 50" fill="none"><rect x="2" y="5" width="9" height="35" rx="2" fill="#2ecc71"/><rect x="2" y="19" width="22" height="7" rx="2" fill="#2ecc71"/><rect x="15" y="5" width="9" height="35" rx="2" fill="#2ecc71"/><rect x="30" y="5" width="8" height="35" rx="2" fill="#1a2e4a"/><rect x="30" y="5" width="16" height="7" rx="2" fill="#1a2e4a"/><rect x="30" y="17" width="16" height="7" rx="2" fill="#1a2e4a"/><rect x="38" y="5" width="8" height="19" rx="2" fill="#1a2e4a"/><rect x="56" y="5" width="8" height="35" rx="2" fill="#1a2e4a"/><rect x="74" y="5" width="8" height="35" rx="2" fill="#1a2e4a"/><polygon points="60,5 82,5 71,21" fill="#1a2e4a"/><text x="2" y="48" font-family="Arial" font-size="5.5" font-weight="700" fill="#2ecc71">HOSPITAL PUERTO MONTT</text></svg>
-  <div class="hdr-text"><h1>Hoja de Ruta — <span>Rediseño del Proceso Ambulatorio</span> y Gestión de la Continuidad de la Atención</h1></div></div>
-  <div class="memento">Rediseñar el organigrama no es rediseñar la operación.</div>`;
+  <div class="hdr-text"><h1>Hoja de Ruta — <span>Implementación del Modelo de Gobernanza Integral de la Atención Abierta</span></h1><div class="sub">MGIAA · Hospital Puerto Montt · 2026–2030</div></div></div>
+  <div class="memento">La estructura sigue al proceso, no al revés.</div>`;
   h+=`<div class="prop"><h2>🎯 Propósito general</h2><p class="pdesc">${D.propDesc}</p>
     <div class="obj-gen"><span>Objetivo general</span>${D.objGeneral}</div>
     <h3>Objetivos específicos</h3><div class="obj-grid">${D.objectives.map(o=>`<div class="obj-item">→ ${o}</div>`).join('')}</div></div>`;
-  if(withProg){h+=`<div class="prog-box"><div class="prog-top"><span>📊 Seguimiento</span><span class="prog-pct">${pct}% — ${doneH}/${totalH} hitos</span></div><div class="pbar"><div class="pbar-fill" style="width:${pct}%"></div></div><div class="prog-stages">${D.phases.map((p,i)=>{const c=HS[i]?HS[i].filter(Boolean).length:0,t=p.hitos.length;const cls=c===t&&t>0?'done':c>0?'partial':'';return `<div class="pstage"><div class="pdot ${cls}">${c===t&&t>0?'✓':c>0?'▶':i+1}</div><div class="plbl">${p.num}</div></div>`;}).join('')}</div></div>`;}
-  h+=`<div class="sec-title">⟶ Etapas de implementación</div><div class="tl-row">${D.phases.map((p,i)=>{const c=HS[i]?HS[i].filter(Boolean).length:0,t=p.hitos.length;const col=c===t&&t>0?'color:#27ae60':c>0?'color:#f0a500':'color:transparent';return `<div class="pc"><div class="pc-hd"><div class="pc-num">${p.num}</div><div class="pc-name">${p.name.replace(/\n/g,'<br>')}</div></div><div class="pc-body"><div class="pc-focus">${p.focus}</div><div class="pc-prog" style="${col}">${c>0?Math.round((c/t)*100)+'%':''}</div></div></div>`;}).join('')}</div>`;
-  if(withHitos){h+=`<div class="sec-title">✓ Detalle de hitos por etapa</div>`;D.phases.forEach((p,i)=>{const c=HS[i]?HS[i].filter(Boolean).length:0,t=p.hitos.length;h+=`<div class="phase-detail"><div class="pd-hd"><div class="pd-hd-l"><h3>${p.num} — ${p.name.replace(/\n/,' ')}</h3><p>${p.focus}</p></div><div class="pd-hd-r">${c}/${t}</div></div><div class="pd-body"><h4>Hitos</h4><div class="hlist">${p.hitos.map((hito,j)=>{const done=HS[i]&&HS[i][j];return `<div class="hrow"><div class="hcb ${done?'done':''}">${done?'✓':''}</div><div class="htxt ${done?'done':''}">${hito}</div></div>`;}).join('')}</div></div></div>`;});}
+  if(withProg){h+=`<div class="prog-box"><div class="prog-top"><span>📊 Seguimiento</span><span class="prog-pct">${pct}% ponderado</span></div><div class="prog-counts"><span style="color:#2ecc71">✓ ${totC.i} impl.</span><span style="color:#f0a500">◐ ${totC.d} desarrollo</span><span style="color:#3498db">○ ${totC.p} program.</span><span style="color:#95a5a6">◇ ${totC.x} por definir</span></div><div class="pbar"><div class="pbar-fill" style="width:${pct}%"></div></div><div class="prog-stages">${D.phases.map((p,i)=>{const w=phaseWeighted(i);const cls=w>=.85?'done':w>0?'partial':'';return `<div class="pstage"><div class="pdot ${cls}">${w>=.85?'✓':w>0?'▶':i+1}</div><div class="plbl">${p.num}</div></div>`;}).join('')}</div></div>`;}
+  h+=`<div class="sec-title">⟶ Etapas de implementación</div><div class="tl-row">${D.phases.map((p,i)=>{const c=phaseCounts(i),t=p.hitos.length;const w=phaseWeighted(i);const col=w>=.85?'color:#27ae60':w>0?'color:#f0a500':'color:#aaa';return `<div class="pc"><div class="pc-hd"><div class="pc-num">${p.num}</div><div class="pc-name">${p.name.replace(/\n/g,'<br>')}</div></div><div class="pc-body"><div class="pc-focus">${p.focus}</div><div class="pc-prog" style="${col}">${c.i}/${t} impl.</div></div></div>`;}).join('')}</div>`;
+  if(withHitos){h+=`<div class="sec-title">✓ Detalle de hitos por etapa (estado de avance)</div>`;D.phases.forEach((p,i)=>{const c=phaseCounts(i),t=p.hitos.length;h+=`<div class="phase-detail"><div class="pd-hd"><div class="pd-hd-l"><h3>${p.num} — ${p.name.replace(/\n/,' ')}</h3><p>${p.focus}</p></div><div class="pd-hd-r">${c.i}/${t} impl.</div></div><div class="pd-body"><h4>Hitos</h4><div class="hlist">${p.hitos.map((hito,j)=>{const s=(HS[i]&&HS[i][j])||hito.s||'x';const info=STATE_INFO[s];return `<div class="hrow"><div class="hst" style="background:${info.color}">${info.sym}</div><div class="htxt">${hito.t}</div></div>`;}).join('')}</div></div></div>`;});}
   h+=`<div class="print-footer">Paulo Muñoz Braüchi — Hospital Puerto Montt, ${new Date().getFullYear()} · ${fecha}</div></body></html>`;
   return h;
 }
@@ -863,7 +1044,8 @@ function buildPrint(opt){
   document.getElementById('propDesc').onblur=()=>saveField('propDesc');
   const og=document.getElementById('objGeneralText');
   if(og)og.textContent=D.objGeneral;
-  renderObjs();renderPB();renderTL();updProg();renderHabs('habGrid');renderHabs('habGrid2');renderLib();
+  sanitizeHS();
+  renderObjs();renderGov();renderPB();renderTL();updProg();renderHabs('habGrid');renderHabs('habGrid2');renderLib();
   remoteLoadHS();
   setInterval(()=>{if(document.visibilityState!=='hidden')remoteLoadHS();},30000);
 })();
